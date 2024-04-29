@@ -6,19 +6,18 @@ import constants
 
 @dataclass
 class Node:
-   x: int
-   y: int
-   color: tuple[int, int, int]
-   type_: str # either: empty, a number (classroom, use .is), obstacle
+    min_x: float
+    max_x: float
+    min_y: float
+    max_y: float
+    color: tuple[int, int, int]
+    type_: str # either: empty, classroom (#), obstacle
 
+    def __hash__(self):
+        return hash((self.min_x, self.max_x, self.min_y, self.max_y, self.color, self.type_))
 
-   def __hash__(self):
-       return hash((self.x, self.y))
-
-
-   def __repr__(self):
-       return self.type_ if self.type_.isnumeric() else "X" if self.type_ == "obstacle" else " " if self.type_ == "stairs" else " "
-
+    def __repr__(self):
+        return f"{self.type_} @ ({self.min_x}, {self.min_y}), ({self.max_x}, {self.max_y}"
 
 @dataclass
 class NodePathData:                                                                                                                                                                                                                                                                                                                                                                                                                                  
