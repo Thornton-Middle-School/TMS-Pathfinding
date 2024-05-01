@@ -6,201 +6,216 @@ from constants import *
 from graph import *
 
 def main():
-    window = pygame.display.set_mode((LENGTH, HEIGHT))
-    window.fill(WHITE)
-    pygame.display.set_caption("Thornton Pathfinding")
-    pygame.display.set_icon(pygame.image.load("logo.png"))
-
-    rooms, locations = create_graph()
-
-    for node in rooms.values():
-        pygame.draw.rect(window, BLACK, (node.min_x, node.min_y, node.max_x - node.min_x, node.max_y - node.min_y), 1)
-
-        FONT = None
-
-        if node.type_ in ["GB", "BB", "GB2", "GB3", "BB2", "BB3", "21B", "D110", "D210", "E101", "E107", "E201", "E205"]:
-            FONT = MICRO_FONT
-
-        elif node.type_ in ["16A", "20", "29", "28A", "37", "47", "A101", "A201", "A106", "A206", "B101", "B201", "B106", "B206", "D105", "D205", "D106", "D206", "D112", "D212"]:
-            FONT = TINY_FONT
-
-        elif node.type_ in ["Band", "32", "33", "34", "35", "36", "C101", "C201", "C107", "C205"]:
-            FONT = MINI_FONT
-
-        elif node.type_ in ["SG", "LG"]:
-            FONT = BIG_FONT
-
-        else:
-            FONT = MEDIUM_FONT
-
-        text = FONT.render(node.type_[:-1] if len(node.type_) == 3 and node.type_[1] == "B" else "S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_, True, BLUE)
-        window.blit(text, ((node.min_x + node.max_x) / 2 - text.get_width() / 2, (node.min_y + node.max_y) / 2 - text.get_height() / 2))
-
-    window.blit(HUGE_FONT.render("Upstairs", True, BLACK), (190, 0))
-    window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (100, 240))
-
-    window.blit(HUGE_FONT.render("Start: ", True, BLACK), (475, 50))
-    window.blit(HUGE_FONT.render("  End: ", True, BLACK), (475, 170))
-
-    start_text_box = pygame.Rect(620, 43, 120, 80)
-    end_text_box = pygame.Rect(620, 163, 120, 80)
-    submit_button = pygame.Rect(545, 283, 160, 80)
-
-    pygame.draw.rect(window, BLACK, start_text_box, width=5)
-    pygame.draw.rect(window, BLACK, end_text_box, width=5)
-    pygame.draw.rect(window, GREEN, submit_button)
-
-    window.blit(HUGE_FONT.render("Submit", True, BLACK), (560, 290))
-
-    def multiline_render(text):
-        x, y = 450, 400
-
-        for line in text.split("\n"):
-            window.blit(CREDITS_FONT.render(line, True, BLACK), (x, y))
-            y += CREDITS_FONT.get_height()
-
-    credits_text = ("Credits to:\n"
-                    "The creator: Pranav Maddineedi\n"
-                    "Mr. Register for measurements & the opportunity\n"
-                    "to make this app\n"
-                    "The creators of Google Earth for making a\n"
-                    "product that contributed to the map's accuracy\n")
-
-    multiline_render(credits_text)
-    pygame.display.update()
-
-    start_text = ""
-    end_text = ""
-    current = None
-
-    complete = False
-
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+        window = pygame.display.set_mode((LENGTH, HEIGHT))
+        window.fill(WHITE)
+        pygame.display.set_caption("Thornton Pathfinding")
+        pygame.display.set_icon(pygame.image.load("logo.png"))
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                if start_text_box.left < mouse_x < start_text_box.right and start_text_box.top < mouse_y < start_text_box.bottom:
-                    current = start_text_box
+        rooms, locations = create_graph()
 
-                elif end_text_box.left < mouse_x < end_text_box.right and end_text_box.top < mouse_y < end_text_box.bottom:
-                    current = end_text_box
+        for node in rooms.values():
+            pygame.draw.rect(window, BLACK, (node.min_x, node.min_y, node.max_x - node.min_x, node.max_y - node.min_y), 1)
 
-                elif submit_button.left < mouse_x < submit_button.right and submit_button.top < mouse_y < submit_button.right and rooms.get(start_text) and rooms.get(end_text):
-                    complete = True
+            FONT = None
 
-                else:
-                    current = None
+            if node.type_ in ["GB", "BB", "GB2", "GB3", "BB2", "BB3", "21B", "D110", "D210", "E101", "E107", "E201", "E205"]:
+                FONT = MICRO_FONT
 
-            if event.type == pygame.KEYUP:
-                if current is None:
-                    continue
+            elif node.type_ in ["16A", "20", "29", "28A", "37", "47", "A101", "A201", "A106", "A206", "B101", "B201", "B106", "B206", "D105", "D205", "D106", "D206", "D112", "D212"]:
+                FONT = TINY_FONT
 
-                if event.key == pygame.K_BACKSPACE:
-                    if current == start_text_box:
-                        start_text = start_text[:-1]
+            elif node.type_ in ["Band", "32", "33", "34", "35", "36", "C101", "C201", "C107", "C205"]:
+                FONT = MINI_FONT
+
+            elif node.type_ in ["SG", "LG"]:
+                FONT = BIG_FONT
+
+            else:
+                FONT = MEDIUM_FONT
+
+            text = FONT.render(node.type_[:-1] if len(node.type_) == 3 and node.type_[1] == "B" else "S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_, True, BLUE)
+            window.blit(text, ((node.min_x + node.max_x) / 2 - text.get_width() / 2, (node.min_y + node.max_y) / 2 - text.get_height() / 2))
+
+        window.blit(HUGE_FONT.render("Upstairs", True, BLACK), (190, 0))
+        window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (100, 240))
+
+        window.blit(HUGE_FONT.render("Start: ", True, BLACK), (475, 50))
+        window.blit(HUGE_FONT.render("  End: ", True, BLACK), (475, 170))
+
+        start_text_box = pygame.Rect(620, 43, 120, 80)
+        end_text_box = pygame.Rect(620, 163, 120, 80)
+        submit_button = pygame.Rect(545, 283, 160, 80)
+
+        pygame.draw.rect(window, BLACK, start_text_box, width=5)
+        pygame.draw.rect(window, BLACK, end_text_box, width=5)
+        pygame.draw.rect(window, GREEN, submit_button)
+
+        window.blit(HUGE_FONT.render("Submit", True, BLACK), (560, 290))
+
+        def multiline_render(text):
+            x, y = 450, 400
+
+            for line in text.split("\n"):
+                window.blit(CREDITS_FONT.render(line, True, BLACK), (x, y))
+                y += CREDITS_FONT.get_height()
+
+        credits_text = ("Credits to:\n"
+                        "The creator: Pranav Maddineedi\n"
+                        "Mr. Register for measurements & the opportunity\n"
+                        "to make this app\n"
+                        "The creators of Google Earth for making a\n"
+                        "product that contributed to the map's accuracy\n")
+
+        multiline_render(credits_text)
+        pygame.display.update()
+
+        start_text = ""
+        end_text = ""
+        current = None
+
+        complete = False
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+                if event.type == pygame.MOUSEBUTTONUP:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    if start_text_box.left < mouse_x < start_text_box.right and start_text_box.top < mouse_y < start_text_box.bottom:
+                        current = start_text_box
+
+                    elif end_text_box.left < mouse_x < end_text_box.right and end_text_box.top < mouse_y < end_text_box.bottom:
+                        current = end_text_box
+
+                    elif submit_button.left < mouse_x < submit_button.right and submit_button.top < mouse_y < submit_button.right and rooms.get(start_text) and rooms.get(end_text):
+                        complete = True
 
                     else:
-                        end_text = end_text[:-1]
+                        current = None
 
-                else:
-                    if current == start_text_box:
-                        start_text += event.unicode
+                if event.type == pygame.KEYUP:
+                    if current is None:
+                        continue
+
+                    if event.key == pygame.K_BACKSPACE:
+                        if current == start_text_box:
+                            start_text = start_text[:-1]
+
+                        else:
+                            end_text = end_text[:-1]
 
                     else:
-                        end_text += event.unicode
+                        if current == start_text_box:
+                            start_text += event.unicode
 
-                pygame.draw.rect(window, WHITE, (start_text_box.left + 5, start_text_box.top + 5, start_text_box.width - 10, start_text_box.height - 10))
-                pygame.draw.rect(window, WHITE, (end_text_box.left + 5, end_text_box.top + 5, end_text_box.width - 10, end_text_box.height - 10))
+                        else:
+                            end_text += event.unicode
 
-                start_text_surface = HUGE_FONT.render(start_text, True, BLACK)
-                end_text_surface = HUGE_FONT.render(end_text, True, BLACK)
+                    pygame.draw.rect(window, WHITE, (start_text_box.left + 5, start_text_box.top + 5, start_text_box.width - 10, start_text_box.height - 10))
+                    pygame.draw.rect(window, WHITE, (end_text_box.left + 5, end_text_box.top + 5, end_text_box.width - 10, end_text_box.height - 10))
 
-                window.blit(start_text_surface,
-                            (680 - start_text_surface.get_width() / 2, 83 - start_text_surface.get_height() / 2))
-                window.blit(end_text_surface,
-                            (680 - end_text_surface.get_width() / 2, 203 - end_text_surface.get_height() / 2))
-                pygame.display.update()
+                    start_text_surface = HUGE_FONT.render(start_text, True, BLACK)
+                    end_text_surface = HUGE_FONT.render(end_text, True, BLACK)
 
-        if complete:
-            break
+                    window.blit(start_text_surface,
+                                (680 - start_text_surface.get_width() / 2, 83 - start_text_surface.get_height() / 2))
+                    window.blit(end_text_surface,
+                                (680 - end_text_surface.get_width() / 2, 203 - end_text_surface.get_height() / 2))
+                    pygame.display.update()
 
-    start, end = rooms[start_text], rooms[end_text]
+            if complete:
+                break
 
-    min_x, min_y, max_x, max_y = 1000, 1000, -1000, -1000
+        start, end = rooms[start_text], rooms[end_text]
 
-    for node in rooms.values():
-        if not upstairs(node):
-            min_x = min(min_x, node.corner_x)
-            max_x = max(max_x, node.corner_x)
-            min_y = min(min_y, node.corner_y)
-            max_y = max(max_y, node.corner_y)
+        min_x, min_y, max_x, max_y = 1000, 1000, -1000, -1000
 
-    original = list(rooms.values()).copy()
+        for node in rooms.values():
+            if not upstairs(node):
+                min_x = min(min_x, node.corner_x)
+                max_x = max(max_x, node.corner_x)
+                min_y = min(min_y, node.corner_y)
+                max_y = max(max_y, node.corner_y)
 
-    for x in range(min_x, max_x + 1):
-        for y in range(min_y, max_y + 1):
-            tangencies = 0
-            corner = False
+        original = list(rooms.values()).copy()
 
-            for node in original:
-                if node.min_x < x < node.max_x and node.min_y < y < node.max_y:
-                    tangencies = 100
-                    break
+        for x in range(min_x, max_x + 1):
+            for y in range(min_y, max_y + 1):
+                tangencies = 0
+                corner = False
 
-                if node.min_x <= x <= node.max_x and node.min_y <= y <= node.max_y:
-                    tangencies += 1
-
-                    if x in [node.min_x, node.max_x] and y in [node.min_y, node.max_y]:
-                        corner = True
+                for node in original:
+                    if node.min_x < x < node.max_x and node.min_y < y < node.max_y:
+                        tangencies = 100
                         break
 
-            if tangencies <= 1 or corner:
-                rooms[f"Empty @ ({x}, {y})"] = Node(x, x, y, y, "empty", corner_x=x, corner_y=y)
-                locations[(x, y)] = rooms[f"Empty @ ({x}, {y})"]
+                    if node.min_x <= x <= node.max_x and node.min_y <= y <= node.max_y:
+                        tangencies += 1
 
-    for node in rooms.values():
-        if not upstairs(node) or node.type_ == "empty":
-            for x_change in range(-1, 2):
-                for y_change in range(-1, 2):
-                    if not (x_change == 0 and y_change == 0) and (adjacent := locations.get((node.corner_x + x_change, node.corner_y + y_change))):
-                        node.adjacent_nodes.append((adjacent, 1 if abs(x_change) + abs(y_change) == 1 else DIAGONAL_DISTANCE))
+                        if x in [node.min_x, node.max_x] and y in [node.min_y, node.max_y]:
+                            corner = True
+                            break
 
-    priority_queue: tuple[float, Node, float, float] = []
-    start.distance = 0
-    heappush(priority_queue, (heuristic(start, end), heuristic(start, end), 0, start))
+                if tangencies <= 1 or corner:
+                    rooms[f"Empty @ ({x}, {y})"] = Node(x, x, y, y, "empty", corner_x=x, corner_y=y)
+                    locations[(x, y)] = rooms[f"Empty @ ({x}, {y})"]
 
-    while priority_queue:
-        _, _, distance, node = heappop(priority_queue)
+        for node in rooms.values():
+            if not upstairs(node) or node.type_ == "empty":
+                for x_change in range(-1, 2):
+                    for y_change in range(-1, 2):
+                        if not (x_change == 0 and y_change == 0) and (adjacent := locations.get((node.corner_x + x_change, node.corner_y + y_change))):
+                            node.adjacent_nodes.append((adjacent, 1 if abs(x_change) + abs(y_change) == 1 else DIAGONAL_DISTANCE))
 
-        if distance > node.distance:
-            continue
+        priority_queue: tuple[float, Node, float, float] = []
+        start.distance = 0
+        heappush(priority_queue, (heuristic(start, end), heuristic(start, end), 0, start))
 
-        if (node.corner_x, node.corner_y) == (end.corner_x, node.corner_y):
-            break
+        while priority_queue:
+            _, _, distance, node = heappop(priority_queue)
 
-        for adjacent, edge_weight in node.adjacent_nodes:
-            if adjacent.distance > distance + edge_weight:
-                adjacent.from_ = node
-                adjacent.distance = distance + edge_weight
-                heappush(priority_queue, (heuristic(adjacent, end) + distance + edge_weight, heuristic(adjacent, end), distance + edge_weight, adjacent))
+            if distance > node.distance:
+                continue
 
-    while node is not None:
-        pygame.draw.circle(window, GREEN if node == start else RED if node == end else YELLOW, (node.corner_x, node.corner_y), 4)
-        node = node.from_
+            if (node.corner_x, node.corner_y) == (end.corner_x, node.corner_y):
+                break
 
-    pygame.draw.circle(window, RED, (end.corner_x, end.corner_y), 4)
+            for adjacent, edge_weight in node.adjacent_nodes:
+                if adjacent.distance > distance + edge_weight:
+                    adjacent.from_ = node
+                    adjacent.distance = distance + edge_weight
+                    heappush(priority_queue, (heuristic(adjacent, end) + distance + edge_weight, heuristic(adjacent, end), distance + edge_weight, adjacent))
 
-    pygame.display.update()
+        while node is not None:
+            pygame.draw.circle(window, GREEN if node == start else RED if node == end else YELLOW, (node.corner_x, node.corner_y), 4)
+            node = node.from_
 
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+        pygame.draw.circle(window, RED, (end.corner_x, end.corner_y), 4)
+        pygame.draw.rect(window, RED, submit_button)
+
+        window.blit(HUGE_FONT.render("Reset", True, BLACK), (560, 290))
+        pygame.display.update()
+
+        while True:
+            reset = False
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+                if event.type == pygame.MOUSEBUTTONUP:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                    if submit_button.left <= mouse_x <= submit_button.right and submit_button.top <= mouse_y <= submit_button.bottom:
+                        reset = True
+                        break
+                        
+            if reset:
+                break
 
 if __name__ == "__main__":
     main()
