@@ -53,12 +53,12 @@ def main():
 
         window.blit(HUGE_FONT.render("Submit", True, BLACK), (560, 290))
 
-        def multiline_render(text):
-            x, y = 450, 400
+        def multiline_render(text, start_x, start_y):
+            x, y = start_x, start_y
 
             for line in text.split("\n"):
-                window.blit(CREDITS_FONT.render(line, True, BLACK), (x, y))
-                y += CREDITS_FONT.get_height()
+                window.blit(CREDITS_and_SIZE_FONT.render(line, True, BLACK), (x, y))
+                y += CREDITS_and_SIZE_FONT.get_height()
 
         credits_text = ("Credits to:\n"
                         "The creator: Pranav Maddineedi\n"
@@ -67,7 +67,7 @@ def main():
                         "The creators of Google Earth for making a\n"
                         "product that contributed to the map's accuracy\n")
 
-        multiline_render(credits_text)
+        multiline_render(credits_text, 450, 400)
         pygame.display.update()
 
         start_text = ""
@@ -129,6 +129,9 @@ def main():
             if complete:
                 break
 
+        window.blit(CREDITS_and_SIZE_FONT.render("Calculating...", True, BLACK), (50, 50))
+        pygame.display.update()
+
         start, end = rooms[start_text], rooms[end_text]
 
         min_x, min_y, max_x, max_y = 1000, 1000, -1000, -1000
@@ -144,10 +147,16 @@ def main():
 
         for x in range(min_x, max_x + 1):
             for y in range(min_y, max_y + 1):
+                if locations.get((x, y)):
+                    continue
+
                 tangencies = 0
                 corner = False
 
                 for node in original:
+                    if node == end:
+                        corner = corner
+
                     if node.min_x < x < node.max_x and node.min_y < y < node.max_y:
                         tangencies = 100
                         break
@@ -180,23 +189,37 @@ def main():
             if distance > node.distance:
                 continue
 
-            if (node.corner_x, node.corner_y) == (end.corner_x, node.corner_y):
+            if node == end:
                 break
 
             for adjacent, edge_weight in node.adjacent_nodes:
                 if adjacent.distance > distance + edge_weight:
-                    adjacent.from_ = node
+                    adjacent.from_ = (node, edge_weight)
                     adjacent.distance = distance + edge_weight
                     heappush(priority_queue, (heuristic(adjacent, end) + distance + edge_weight, heuristic(adjacent, end), distance + edge_weight, adjacent))
 
-        while node is not None:
-            pygame.draw.circle(window, GREEN if node == start else RED if node == end else YELLOW, (node.corner_x, node.corner_y), 4)
-            node = node.from_
+        node = end
+        distance = 0.0
 
+        while node.from_ is not None:
+            if not (node.type_[:-1] == node.from_[0].type_[:-1] and node.type_[0] == "S" and node.type_ != "SG"):
+                pygame.draw.line(window, YELLOW, (node.corner_x, node.corner_y), (node.from_[0].corner_x, node.from_[0].corner_y), width=2)
+
+            distance += node.from_[1]
+            node = node.from_[0]
+
+        distance *= SCALE
+
+        pygame.draw.circle(window, GREEN, (start.corner_x, start.corner_y), 4)
         pygame.draw.circle(window, RED, (end.corner_x, end.corner_y), 4)
-        pygame.draw.rect(window, RED, submit_button)
 
-        window.blit(HUGE_FONT.render("Reset", True, BLACK), (560, 290))
+        pygame.draw.rect(window, RED, submit_button)
+        window.blit(HUGE_FONT.render("Reset", True, BLACK), (570, 290))
+
+        pygame.draw.rect(window, WHITE, (50, 50, 100, 50))
+        multiline_render(f"Distance: {floor(distance)} ft\n"
+                         f"Predicted Walking time: {floor((distance/4)//60):}min and {floor((distance/4)%60)}sec", # People walk at about 4 ft per second
+                         20, 175)
         pygame.display.update()
 
         while True:
@@ -213,7 +236,7 @@ def main():
                     if submit_button.left <= mouse_x <= submit_button.right and submit_button.top <= mouse_y <= submit_button.bottom:
                         reset = True
                         break
-                        
+
             if reset:
                 break
 
