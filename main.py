@@ -218,7 +218,7 @@ def main():
 
         pygame.draw.rect(window, WHITE, (50, 50, 100, 50))
         multiline_render(f"Distance: {floor(distance)} ft\n"
-                         f"Predicted Walking time: {floor((distance/4)//60):}min and {floor((distance/4)%60)}sec", # People walk at about 4 ft per second
+                         f"Predicted Walking Time: {floor((distance/4)//60):}min and {floor((distance/4)%60)}sec", # People walk at about 4 ft per second
                          20, 175)
         pygame.display.update()
 
