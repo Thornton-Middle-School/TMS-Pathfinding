@@ -5,7 +5,8 @@ LENGTH, HEIGHT = 800, 600 # Fills the screen on an Amazon Fire 7
 
 DIAGONAL_DISTANCE = sqrt(2)
 DIAGONAL_DISTANCE_REPR = "√2"
-NODE_LENGTH_DISTANCE, NODE_WIDTH_DISTANCE, STAIR_DISTANCE = 40, 33, 43
+STAIRS_DISTANCE = 39.6
+SCALE = 13/12
 
 WHITE = (255, 255, 255) # 100% Luminosity
 BLACK = (0, 0, 0) # 0%
@@ -17,7 +18,7 @@ LIGHT_BROWN = (255, 248, 220) # Some classrooms
 
 GREEN = (0, 230, 0)
 RED = (230, 0, 0)
-YELLOW = (255, 255, 0)
+YELLOW = (255, 165, 0)
 
 pygame.font.init()
 MICRO_FONT = pygame.font.SysFont("comicsans", 7)
@@ -26,6 +27,7 @@ MINI_FONT = pygame.font.SysFont("comicsans", 9)
 MEDIUM_FONT = pygame.font.SysFont("comicsans", 10)
 BIG_FONT = pygame.font.SysFont("comicsans", 25)
 HUGE_FONT = pygame.font.SysFont("comicsans", 40)
+CREDITS_and_SIZE_FONT = pygame.font.SysFont("comicsans", 15)
 
 def decimal_range(start, stop, step=1):
     value = start
