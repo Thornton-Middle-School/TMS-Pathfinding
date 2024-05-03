@@ -116,3 +116,11 @@ def heuristic(node: Node, end: Node) -> float:
         return (sqrt((node.corner_x - end.corner_x) ** 2 + (abs(node.corner_y - end.corner_y) - 270) ** 2) + STAIRS_DISTANCE) * 1.001
 
     return sqrt((node.corner_x - end.corner_x) ** 2 + (node.corner_y - end.corner_y) ** 2) * 1.001
+
+# Draw the credits
+def multiline_render(window: pygame.surface, text: str, start_x: float, start_y: float, font: pygame.font.Font) -> None:
+    x, y = start_x, start_y
+
+    for line in text.split("\n"):
+        window.blit(font.render(line, True, BLACK), (x, y))
+        y += font.get_height()
