@@ -20,6 +20,7 @@ GREEN = (0, 230, 0)
 RED = (230, 0, 0)
 YELLOW = (255, 165, 0)
 
+# Fonts - all but the last are for the room labels, "Start" and "End"
 pygame.font.init()
 MICRO_FONT = pygame.font.SysFont("comicsans", 7)
 TINY_FONT = pygame.font.SysFont("comicsans", 8)
@@ -27,7 +28,8 @@ MINI_FONT = pygame.font.SysFont("comicsans", 9)
 MEDIUM_FONT = pygame.font.SysFont("comicsans", 10)
 BIG_FONT = pygame.font.SysFont("comicsans", 25)
 HUGE_FONT = pygame.font.SysFont("comicsans", 40)
-CREDITS_and_SIZE_FONT = pygame.font.SysFont("comicsans", 15)
+CREDITS_FONT = pygame.font.SysFont("comicsans", 15)
+TYPING_SIZE_FONT = pygame.font.SysFont("comicsans", 30)
 
 def decimal_range(start, stop, step=1):
     value = start
