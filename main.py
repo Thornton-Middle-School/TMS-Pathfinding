@@ -64,7 +64,6 @@ def main():
         for node in original.values():
             pygame.draw.rect(window, BLACK, (node.min_x, node.min_y, node.max_x - node.min_x, node.max_y - node.min_y), 1)
 
-            # Decide on the font based on the size of the room (pre-computed)
             FONT = None
 
             if node.type_ in ["GB", "BB", "GB2", "GB3", "BB2", "BB3", "21B", "D110", "D210", "E101", "E107", "E201", "E205"]:
@@ -85,7 +84,6 @@ def main():
             text = FONT.render(node.type_[:-1] if len(node.type_) == 3 and node.type_[1] == "B" else "S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_, True, BLUE)
             window.blit(text, ((node.min_x + node.max_x) / 2 - text.get_width() / 2, (node.min_y + node.max_y) / 2 - text.get_height() / 2))
 
-        # Draw the rest of the UI
         window.blit(HUGE_FONT.render("Upstairs", True, BLACK), (190, 0))
         window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (100, 240))
 
@@ -112,7 +110,6 @@ def main():
         multiline_render(window, credits_text, 450, 400, CREDITS_FONT)
         pygame.display.update()
 
-        # Take input of the user by making them click on the squares
         start_text = ""
         end_text = ""
         current = None
@@ -139,7 +136,7 @@ def main():
                     else:
                         current = None
 
-                if event.type == pygame.KEYUP:
+                if event.type == pygame.KEYDOWN:
                     if current is None:
                         continue
 
@@ -160,8 +157,8 @@ def main():
                     pygame.draw.rect(window, WHITE, (start_text_box.left + 5, start_text_box.top + 5, start_text_box.width - 10, start_text_box.height - 10))
                     pygame.draw.rect(window, WHITE, (end_text_box.left + 5, end_text_box.top + 5, end_text_box.width - 10, end_text_box.height - 10))
 
-                    start_text_surface = TYPING_SIZE_FONT.render(start_text, True, BLACK)
-                    end_text_surface = TYPING_SIZE_FONT.render(end_text, True, BLACK)
+                    start_text_surface = TYPING_SIZE_FONT.render(start_text[-6:], True, BLACK)
+                    end_text_surface = TYPING_SIZE_FONT.render(end_text[-6:], True, BLACK)
 
                     window.blit(start_text_surface,
                                 (680 - start_text_surface.get_width() / 2, 68 - start_text_surface.get_height() / 2))
@@ -196,7 +193,8 @@ def main():
                 if adjacent.distance > distance + edge_weight:
                     adjacent.from_ = (node, edge_weight)
                     adjacent.distance = distance + edge_weight
-                    heappush(priority_queue, (heuristic(adjacent, end) + distance + edge_weight, heuristic(adjacent, end), distance + edge_weight, adjacent))
+                    heappush(priority_queue, (heuristic(adjacent, end) + distance + edge_weight,
+                                                   heuristic(adjacent, end), distance + edge_weight, adjacent))
                     visited.add(adjacent)
 
         node = end
@@ -204,7 +202,8 @@ def main():
 
         while node.from_ is not None:
             if not (node.type_[:-1] == node.from_[0].type_[:-1] and node.type_[0] == "S" and node.type_ != "SG"):
-                pygame.draw.line(window, YELLOW, (node.corner_x, node.corner_y), (node.from_[0].corner_x, node.from_[0].corner_y), width=2)
+                pygame.draw.line(window, ORANGE, (node.corner_x, node.corner_y),
+                                 (node.from_[0].corner_x, node.from_[0].corner_y), width=2)
 
             _next = node.from_
             distance += _next[1]
@@ -214,6 +213,9 @@ def main():
         start.distance = float("inf")
         distance *= SCALE
 
+        for node in visited:
+            node.distance = float("inf")
+
         pygame.draw.circle(window, GREEN, (start.corner_x, start.corner_y), 4)
         pygame.draw.circle(window, RED, (end.corner_x, end.corner_y), 4)
 
@@ -222,12 +224,12 @@ def main():
 
         pygame.draw.rect(window, WHITE, (50, 50, 100, 50))
         text = (f"  Distance: {floor(distance)} ft\n"
-                f"Walking Time: {floor((distance/4)//60)}:{("0" if floor((distance/4)%60) < 10 else "") + str(floor((distance/4)%60))}") # People walk at about 4 ft per second
+                f"Walking Time: {floor((distance/4)//60)}:{("0" if floor((distance/4)%60) < 10 else "") + str(floor((distance/4)%60))}")
 
         rendered = TYPING_SIZE_FONT.render(text, True, BLACK)
         multiline_render(window, text, 620 - rendered.get_width() / 4, 250 - rendered.get_height(), TYPING_SIZE_FONT)
 
-        pygame.display.update() # People walk at about 4 ft per second
+        pygame.display.update()
 
         while True:
             reset = False
@@ -246,9 +248,6 @@ def main():
 
             if reset:
                 break
-
-        for node in visited:
-            node.distance = float("inf")
 
 if __name__ == "__main__":
     main()
