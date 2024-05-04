@@ -9,7 +9,6 @@ root = tree.getroot()[0]
 
 coordinates = {}
 
-# Rotating the points on the map so that the rectangles won't be messed up
 def rotate(x, y, theta=303*pi/180):
     return [x * cos(theta) - y * sin(theta), y * cos(theta) + x * sin(theta)]
 
@@ -20,17 +19,11 @@ for place in root.findall(prefix + "Placemark"):
     name = place.find(prefix + "name").text
     longitude, latitude, _ = map(float, place.find(prefix + "Point").find(prefix + "coordinates").text.split(","))
     coordinates[name] = rotate(longitude, latitude)
-    # print(name, coordinates[name])
 
     left = min(coordinates[name][0], left)
     right = max(coordinates[name][0], right)
     top = max(coordinates[name][1], top)
     bottom = min(coordinates[name][1], bottom)
-
-# for place in root.findall(prefix + "Placemark"):
-#     name = place.find(prefix + "name").text
-#     coordinates[name][0] = (coordinates[name][0] - left) * 200000
-#     coordinates[name][1] = (coordinates[name][1] - bottom) * 200000
 
 print(f"X: {left} -> {right}, diff={right - left}")
 print(f"Y: {bottom} -> {top}, diff={top - bottom}")
@@ -39,10 +32,7 @@ print(f"average diff: {coordinates["12.2"][0] - coordinates["12.1"][0]}")
 
 old = deepcopy(coordinates)
 
-# When goto=True, all the coordinates are equal to the last argument. Otherwise, they are averaged.
 def make_equal(*args: list[str], longitude=True, latitude=True, goto=False):
-    # Longitude is the first index, and the second is the latitude (for the coordinate array)
-    # Go to the last argument
     if goto:
         for arg in args[:-1]:
             if longitude:
@@ -53,7 +43,6 @@ def make_equal(*args: list[str], longitude=True, latitude=True, goto=False):
 
         return
 
-    # Take the sum, then divide
     average_longitude = 0
     average_latitude = 0
 
@@ -67,7 +56,6 @@ def make_equal(*args: list[str], longitude=True, latitude=True, goto=False):
     average_longitude /= len(args)
     average_latitude /= len(args)
 
-    # Putting the arguments in the same "pool"
     if longitude and latitude:
         coordinates[args[0]] = [average_longitude, average_latitude]
 
@@ -198,7 +186,6 @@ for place in root.findall(prefix + "Placemark"):
     top = min(coordinates[name][1], top)
     bottom = max(coordinates[name][1], bottom)
 
-# New Coordinates
 coordinates_new = {}
 
 for place in root.findall(prefix + "Placemark"):
@@ -207,7 +194,6 @@ for place in root.findall(prefix + "Placemark"):
     coordinates_new[name][0] = (coordinates[name][0] - left) * 200000
     coordinates_new[name][1] = (coordinates[name][1] - top) * 200000
 
-# These are used for subtraction and compressing the coordinates
 left, right = 500, -500
 top, bottom = 500, -500
 
@@ -219,12 +205,10 @@ for place in root.findall(prefix + "Placemark"):
     bottom = max(coordinates_new[name][1], bottom)
 
 for place in root.findall(prefix + "Placemark"):
-    # Updating the coordinates and placing them in another file
     name = place.find(prefix + "name").text
     place.find(prefix + "LookAt").find(prefix + "longitude").text = f"{coordinates_new[name][0]}"
     place.find(prefix + "LookAt").find(prefix + "latitude").text = f"{coordinates_new[name][1]}"
     place.find(prefix + "Point").find(prefix + "coordinates").text = f"{coordinates_new[name][0]},{coordinates_new[name][1]},{place.find(prefix + "Point").find(prefix + "coordinates").text.split(",")[2]}"
-    # print(name, coordinates[name], old[name])
     print(coordinates_new[name][0] - coordinates_new[name[:-1] + str(3 - int(name[-1]))][0], coordinates_new[name][1] - coordinates_new[name[:-1] + str(3 - int(name[-1]))][1])
 
     if coordinates_new[name][0] - coordinates_new[name[:-1] + str(3 - int(name[-1]))][0] == 0 or coordinates_new[name][1] - coordinates_new[name[:-1] + str(3 - int(name[-1]))][1] == 0:
@@ -244,3 +228,6 @@ x_diffs.sort()
 y_diffs.sort()
 
 print(f"min x diff: {min((second[0] - first[0], first[1], second[1]) for first, second in zip(x_diffs[:-1], x_diffs[1:]) if second[0] != first[0])}, min y diff: {min((second[0] - first[0], first[1], second[1]) for first, second in zip(y_diffs[:-1], y_diffs[1:]) if second[0] != first[0])}")
+
+if __name__ == "__main__":
+    pass
