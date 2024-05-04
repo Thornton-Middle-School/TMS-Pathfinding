@@ -1,4 +1,4 @@
-from math import sqrt, floor
+from math import floor
 from functools import total_ordering
 from dataclasses import dataclass, field
 from xml.etree import ElementTree
@@ -11,7 +11,7 @@ class Node:
     max_x: float
     min_y: float
     max_y: float
-    type_: str # either: empty, classroom (#), obstacle
+    type_: str
     color: tuple[int, int, int] = WHITE
     adjacent_nodes: list[tuple['Node', float]] = field(default_factory=lambda: [])
     corner_x: float = -1
@@ -28,9 +28,8 @@ class Node:
     def __lt__(self, other):
         return (self.min_x, self.max_x, self.min_y, self.max_y, self.color, self.type_) < (other.min_x, other.max_x, other.min_y, other.max_y, other.color, other.type_)
 
-    # def __eq__(self, other):
-    #     (self.min_x, self.max_x, self.min_y, self.max_y, self.color, self.type_) < (other.min_x, other.max_x, other.min_y, other.max_y, other.color, other.type_)
-
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 def upstairs(node: Node | str):
     if isinstance(node, Node):
         return node.corner_y < 224
@@ -117,7 +116,6 @@ def heuristic(node: Node, end: Node) -> float:
 
     return sqrt((node.corner_x - end.corner_x) ** 2 + (node.corner_y - end.corner_y) ** 2) * 1.001
 
-# Draw the credits
 def multiline_render(window: pygame.surface, text: str, start_x: float, start_y: float, font: pygame.font.Font) -> None:
     x, y = start_x, start_y
 
