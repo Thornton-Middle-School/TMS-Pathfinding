@@ -1,3 +1,4 @@
+import sys
 from heapq import heappush, heappop
 from graph import *
 
@@ -8,7 +9,7 @@ def main():
     pygame.display.set_icon(pygame.image.load("logo.png"))
 
     loading = HUGE_FONT.render("Loading...", True, BLACK)
-    window.blit(loading, (400 - loading.get_width() / 2, 295 - loading.get_height() / 2))
+    window.blit(loading, (400 - loading.get_width() / 2, 300 - loading.get_height() / 2))
     pygame.display.update()
 
     rooms, locations = create_graph()
@@ -86,7 +87,7 @@ def main():
         window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (100, 265))
 
         window.blit(TYPING_SIZE_FONT.render("Start: ", True, BLACK), (490, 66))
-        window.blit(TYPING_SIZE_FONT.render("  End: ", True, BLACK), (490, 159))
+        window.blit(TYPING_SIZE_FONT.render("  End: ", True, BLACK), (490, 162))
 
         start_text_box = pygame.Rect(620, 63, 120, 50)
         end_text_box = pygame.Rect(620, 156, 120, 50)
@@ -121,7 +122,7 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+                    sys.exit()
 
                 if event.type == pygame.MOUSEBUTTONUP:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -150,7 +151,7 @@ def main():
                             pygame.draw.rect(window, BLACK, end_text_box, width=5)
 
                         if start_bad or end_bad:
-                            window.blit(INVALID, (620 - INVALID.get_width() / 2, 245 - INVALID.get_height() / 2))
+                            window.blit(INVALID, (620 - INVALID.get_width() / 2, 270 - INVALID.get_height() / 2))
                             pygame.display.update()
 
                         else:
@@ -245,7 +246,7 @@ def main():
 
         pygame.draw.rect(window, RED, submit_button)
         reset = TYPING_SIZE_FONT.render("Reset", True, BLACK)
-        window.blit(reset, (620 - reset.get_width() / 2, 355 - reset.get_height() / 2))
+        window.blit(reset, (620 - reset.get_width() / 2, 365 - reset.get_height() / 2))
 
         pygame.draw.rect(window, WHITE, (50, 70, 100, 50))
 
@@ -263,7 +264,7 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit()
+                    sys.exit()
 
                 if event.type == pygame.MOUSEBUTTONUP:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
