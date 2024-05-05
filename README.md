@@ -16,7 +16,7 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 4. If you want to enter in more rooms, press "Reset".
 
 ## Example Input & Path
-![image](https://github.com/Pramad712/Thornton-Shortest-Paths/assets/77818951/990ba9b1-9912-4990-bac1-862af2ae8cc3)
+![image](https://github.com/Pramad712/Thornton-Shortest-Paths/assets/77818951/3d480c4b-c526-4bc5-b5a6-b502f9dcc323)
 
 - Rooms SG (large gym) & E205 do exist
 - The green dot is the starting position (SG)
