@@ -2846,7 +2846,7 @@
 	<ns0:Placemark id="0B969BE945303C340B79">
 		<ns0:name>SA.1</ns0:name>
 		<ns0:LookAt>
-			<ns0:longitude>209.50687215730568</ns0:longitude>
+			<ns0:longitude>214.50687215730568</ns0:longitude>
 			<ns0:latitude>164.5233433833937</ns0:latitude>
 			<ns0:altitude>23.93307650278788</ns0:altitude>
 			<ns0:heading>304.0567842542573</ns0:heading>
@@ -2857,7 +2857,7 @@
 		</ns0:LookAt>
 		<ns0:styleUrl>#__managed_style_06C2C74C3130617FD97B</ns0:styleUrl>
 		<ns0:Point>
-			<ns0:coordinates>209.50687215730568,164.5233433833937,21.58033997775585</ns0:coordinates>
+			<ns0:coordinates>214.50687215730568,164.5233433833937,21.58033997775585</ns0:coordinates>
 		</ns0:Point>
 	</ns0:Placemark>
 	<ns0:Placemark id="0A620A09CE303C3457B6">
@@ -2898,7 +2898,7 @@
 		<ns0:name>SB.2</ns0:name>
 		<ns0:LookAt>
 			<ns0:longitude>229.81946670483921</ns0:longitude>
-			<ns0:latitude>190.44022102718827</ns0:latitude>
+			<ns0:latitude>185.44022102718827</ns0:latitude>
 			<ns0:altitude>23.93307650278788</ns0:altitude>
 			<ns0:heading>304.0567842542573</ns0:heading>
 			<ns0:tilt>0</ns0:tilt>
@@ -2908,7 +2908,7 @@
 		</ns0:LookAt>
 		<ns0:styleUrl>#__managed_style_06C2C74C3130617FD97B</ns0:styleUrl>
 		<ns0:Point>
-			<ns0:coordinates>229.81946670483921,190.44022102718827,17.73752799466361</ns0:coordinates>
+			<ns0:coordinates>229.81946670483921,185.44022102718827,17.73752799466361</ns0:coordinates>
 		</ns0:Point>
 	</ns0:Placemark>
 	<ns0:Placemark id="02F6B8E87F303C35D381">
@@ -2932,7 +2932,7 @@
 		<ns0:name>SC.2</ns0:name>
 		<ns0:LookAt>
 			<ns0:longitude>258.95065789143246</ns0:longitude>
-			<ns0:latitude>129.73010250334482</ns0:latitude>
+			<ns0:latitude>139.73010250334482</ns0:latitude>
 			<ns0:altitude>23.93307650278788</ns0:altitude>
 			<ns0:heading>304.0567842542573</ns0:heading>
 			<ns0:tilt>0</ns0:tilt>
@@ -2942,13 +2942,13 @@
 		</ns0:LookAt>
 		<ns0:styleUrl>#__managed_style_06C2C74C3130617FD97B</ns0:styleUrl>
 		<ns0:Point>
-			<ns0:coordinates>258.95065789143246,129.73010250334482,15.10198893820689</ns0:coordinates>
+			<ns0:coordinates>258.95065789143246,139.73010250334482,15.10198893820689</ns0:coordinates>
 		</ns0:Point>
 	</ns0:Placemark>
 	<ns0:Placemark id="0D0DF1D5F3303C3711AC">
 		<ns0:name>SD.2</ns0:name>
 		<ns0:LookAt>
-			<ns0:longitude>288.271912101834</ns0:longitude>
+			<ns0:longitude>293.271912101834</ns0:longitude>
 			<ns0:latitude>187.03118108476247</ns0:latitude>
 			<ns0:altitude>18.64586884848097</ns0:altitude>
 			<ns0:heading>304.0568825608631</ns0:heading>
@@ -2959,7 +2959,7 @@
 		</ns0:LookAt>
 		<ns0:styleUrl>#__managed_style_06C2C74C3130617FD97B</ns0:styleUrl>
 		<ns0:Point>
-			<ns0:coordinates>288.271912101834,187.03118108476247,14.69034732837534</ns0:coordinates>
+			<ns0:coordinates>293.271912101834,187.03118108476247,14.69034732837534</ns0:coordinates>
 		</ns0:Point>
 	</ns0:Placemark>
 	<ns0:Placemark id="06507CD0E9303C37460C">
