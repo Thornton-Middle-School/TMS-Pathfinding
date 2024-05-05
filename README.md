@@ -18,7 +18,7 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 ## Example Input & Path
 ![image](https://github.com/Pramad712/Thornton-Shortest-Paths/assets/77818951/3d480c4b-c526-4bc5-b5a6-b502f9dcc323)
 
-- Rooms SG (large gym) & E205 do exist
+- Rooms SG (small gym) & E205 do exist
 - The green dot is the starting position (SG)
 - The red dot is the ending position (E205)
 - The path between the points is in orange
