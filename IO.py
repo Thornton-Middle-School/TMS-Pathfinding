@@ -228,3 +228,6 @@ x_diffs.sort()
 y_diffs.sort()
 
 print(f"min x diff: {min((second[0] - first[0], first[1], second[1]) for first, second in zip(x_diffs[:-1], x_diffs[1:]) if second[0] != first[0])}, min y diff: {min((second[0] - first[0], first[1], second[1]) for first, second in zip(y_diffs[:-1], y_diffs[1:]) if second[0] != first[0])}")
+
+if __name__ == "__main__":
+    pass
