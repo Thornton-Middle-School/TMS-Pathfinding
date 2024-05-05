@@ -17,15 +17,15 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 4. If you want to enter in more rooms, press "Reset".
 
 ## Example Input & Path
-![image](https://github.com/Pramad712/Thornton-Shortest-Paths/assets/77818951/7e6d6f4f-aa98-481b-a5aa-05a50967be33)
+![image](https://github.com/Pramad712/Thornton-Shortest-Paths/assets/77818951/563d1236-fc15-41b2-93cc-d926be147d47)
 
-- Rooms 4 & E205 do exist
-- "E" is uppercase
-- The green dot is the starting position (room 4)
+- Rooms LG (large gym) & E205 do exist
+- "L", "G", and "E" are uppercase
+- The green dot is the starting position (LG)
 - The red dot is the ending position (E205)
 - The path between the points is in orange
-- The distance is shown in feet on the right (392 feet)
-- The estimated time to walk that path is also on the right (1 minute and 38 seconds)
+- The distance is shown in feet on the right (409 feet)
+- The estimated time to walk that path is also on the right (1 minute and 42 seconds)
 - The part of the path that is upstairs may not seem optimal. However, there is a railing around the classrooms.
 
   ### Credits
