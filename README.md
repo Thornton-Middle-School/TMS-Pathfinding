@@ -6,15 +6,13 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 - Pygame 2.5.2
 
 ## Instructions
-1. Using the map shown, enter in your starting and ending location
-  - The inputs must be the exact same as the name on the map. For example, if you start in room 1, you can not input "One" or "Room 1".
+1. Using the map shown, enter in your starting and ending room
+  - The inputs must be the exact same as the name on the map. For example, if you start in room 1, you can not input "One" or "Room 1" (you have to type "1").
   - All letters (if applicable) must be uppercase.
-  - Only the last 5 characters are displayed. Backspaces are supported.
   - You must select each box, or click away. The enter key does not work.
 
-2. Press the Submit button.
-3. The shortest path will be shown in orange and a green and red dot for the starting and ending positions respectively. The distance and predicted walking time (assumes you walk at 4 ft/second) are displayed on the right.
-  - If none of these are displayed, check for any problems with the input. Check the constraints above.
+2. Click the Submit button.
+3. The shortest path will be shown in orange and a green and red dot for the starting and ending positions respectively. The distance and predicted walking time (assumes you walk at 4 ft/second) are displayed on the right. Otheriwse, "Invalid Input" is displayed on the right in red, and so are the invalid inputs.
 
 4. If you want to enter in more rooms, press "Reset".
 
