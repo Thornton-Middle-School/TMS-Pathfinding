@@ -30,6 +30,7 @@ class Node:
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
+        
 def upstairs(node: Node | str):
     if isinstance(node, Node):
         return node.corner_y < 224
@@ -56,7 +57,7 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
         original = name
         name = name[:-2] if name[0] != "S" or name[:2] == "SG" else name
 
-        y_subtraction = 320 if upstairs(name) else 50
+        y_subtraction = 300 if upstairs(name) else 30
 
         if name in rooms:
             rooms[name].min_x = min(rooms[name].min_x, longitude)
