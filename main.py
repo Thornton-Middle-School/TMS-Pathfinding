@@ -8,7 +8,7 @@ def main():
     pygame.display.set_icon(pygame.image.load("logo.png"))
 
     loading = HUGE_FONT.render("Loading...", True, BLACK)
-    window.blit(loading, (400 - loading.get_width() / 2, 300 - loading.get_height() / 2))
+    window.blit(loading, (400 - loading.get_width() / 2, 295 - loading.get_height() / 2))
     pygame.display.update()
 
     rooms, locations = create_graph()
@@ -22,8 +22,6 @@ def main():
             max_x = max(max_x, node.corner_x)
             min_y = min(min_y, node.corner_y)
             max_y = max(max_y, node.corner_y)
-
-    print(min_x, max_x, min_y, max_y)
 
     for x in range(min_x, max_x + 1):
         for y in range(min_y, max_y + 1):
@@ -66,10 +64,10 @@ def main():
 
             FONT = None
 
-            if node.type_ in ["GB", "BB", "GB2", "GB3", "BB2", "BB3", "21B", "D110", "D210", "E101", "E107", "E201", "E205"]:
+            if node.type_ in ["GB", "BB", "GB2", "GB3", "BB2", "BB3", "21B", "D110", "D210"]:
                 FONT = MICRO_FONT
 
-            elif node.type_ in ["16A", "20", "29", "28A", "37", "47", "A101", "A201", "A106", "A206", "B101", "B201", "B106", "B206", "D105", "D205", "D106", "D206", "D112", "D212"]:
+            elif node.type_ in ["16A", "20", "29", "28A", "37", "47", "A101", "A201", "A106", "A205", "B101", "B201", "B106", "B205", "D105", "D205", "D106", "D206", "D112", "D212", "E101", "E107", "E201", "E205"]:
                 FONT = TINY_FONT
 
             elif node.type_ in ["Band", "32", "33", "34", "35", "36", "C101", "C201", "C107", "C205"]:
@@ -84,21 +82,22 @@ def main():
             text = FONT.render(node.type_[:-1] if len(node.type_) == 3 and node.type_[1] == "B" else "S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_, True, BLUE)
             window.blit(text, ((node.min_x + node.max_x) / 2 - text.get_width() / 2, (node.min_y + node.max_y) / 2 - text.get_height() / 2))
 
-        window.blit(HUGE_FONT.render("Upstairs", True, BLACK), (190, 0))
-        window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (100, 240))
+        window.blit(HUGE_FONT.render("Upstairs", True, BLACK), (205, 20))
+        window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (100, 265))
 
-        window.blit(TYPING_SIZE_FONT.render("Start: ", True, BLACK), (490, 46))
-        window.blit(TYPING_SIZE_FONT.render("  End: ", True, BLACK), (490, 139))
+        window.blit(TYPING_SIZE_FONT.render("Start: ", True, BLACK), (490, 66))
+        window.blit(TYPING_SIZE_FONT.render("  End: ", True, BLACK), (490, 159))
 
-        start_text_box = pygame.Rect(620, 43, 120, 50)
-        end_text_box = pygame.Rect(620, 136, 120, 50)
-        submit_button = pygame.Rect(560, 320, 120, 50)
+        start_text_box = pygame.Rect(620, 63, 120, 50)
+        end_text_box = pygame.Rect(620, 156, 120, 50)
+        submit_button = pygame.Rect(560, 340, 120, 50)
 
         pygame.draw.rect(window, BLACK, start_text_box, width=5)
         pygame.draw.rect(window, BLACK, end_text_box, width=5)
         pygame.draw.rect(window, GREEN, submit_button)
 
-        window.blit(TYPING_SIZE_FONT.render("Submit", True, BLACK), (570, 322))
+        submit = TYPING_SIZE_FONT.render("Submit", True, BLACK)
+        window.blit(submit, (620 - submit.get_width() / 2, 365 - submit.get_height() / 2))
 
         credits_text = ("Credits to:\n"
                         "The creator: Pranav Maddineedi\n"
@@ -107,12 +106,14 @@ def main():
                         "The creators of Google Earth for making a\n"
                         "product that contributed to the map's accuracy\n")
 
-        multiline_render(window, credits_text, 450, 400, CREDITS_FONT)
+        multiline_render(window, credits_text, 445, 455, CREDITS_FONT)
         pygame.display.update()
 
         start_text = ""
         end_text = ""
         current = None
+
+        INVALID = TYPING_SIZE_FONT.render("Invalid Input", True, RED)
 
         complete = False
 
@@ -130,8 +131,31 @@ def main():
                     elif end_text_box.left < mouse_x < end_text_box.right and end_text_box.top < mouse_y < end_text_box.bottom:
                         current = end_text_box
 
-                    elif submit_button.left < mouse_x < submit_button.right and submit_button.top < mouse_y < submit_button.right and original.get(start_text) and original.get(end_text):
-                        complete = True
+                    elif submit_button.left < mouse_x < submit_button.right and submit_button.top < mouse_y < submit_button.right:
+                        start_bad = False
+                        end_bad = False
+
+                        if not original.get(start_text):
+                            pygame.draw.rect(window, RED, start_text_box, width=5)
+                            start_bad = True
+
+                        else:
+                            pygame.draw.rect(window, BLACK, start_text_box, width=5)
+
+                        if not original.get(end_text):
+                            pygame.draw.rect(window, RED, end_text_box, width=5)
+                            end_bad = True
+
+                        else:
+                            pygame.draw.rect(window, BLACK, end_text_box, width=5)
+
+                        if start_bad or end_bad:
+                            window.blit(INVALID, (620 - INVALID.get_width() / 2, 245 - INVALID.get_height() / 2))
+                            pygame.display.update()
+
+                        else:
+                            pygame.draw.rect(window, WHITE, (620 - INVALID.get_width() / 2, 270 - INVALID.get_height() / 2, INVALID.get_width(), INVALID.get_height()))
+                            complete = True
 
                     else:
                         current = None
@@ -148,28 +172,28 @@ def main():
                             end_text = end_text[:-1]
 
                     else:
-                        if current == start_text_box:
+                        if current == start_text_box and len(start_text) < 6:
                             start_text += event.unicode
 
-                        else:
+                        elif current == end_text_box and len(end_text) < 6:
                             end_text += event.unicode
 
                     pygame.draw.rect(window, WHITE, (start_text_box.left + 5, start_text_box.top + 5, start_text_box.width - 10, start_text_box.height - 10))
                     pygame.draw.rect(window, WHITE, (end_text_box.left + 5, end_text_box.top + 5, end_text_box.width - 10, end_text_box.height - 10))
 
-                    start_text_surface = TYPING_SIZE_FONT.render(start_text[-6:], True, BLACK)
-                    end_text_surface = TYPING_SIZE_FONT.render(end_text[-6:], True, BLACK)
+                    start_text_surface = TYPING_SIZE_FONT.render(start_text, True, BLACK)
+                    end_text_surface = TYPING_SIZE_FONT.render(end_text, True, BLACK)
 
                     window.blit(start_text_surface,
-                                (680 - start_text_surface.get_width() / 2, 68 - start_text_surface.get_height() / 2))
+                                (680 - start_text_surface.get_width() / 2, 88 - start_text_surface.get_height() / 2))
                     window.blit(end_text_surface,
-                                (680 - end_text_surface.get_width() / 2, 161 - end_text_surface.get_height() / 2))
+                                (680 - end_text_surface.get_width() / 2, 181 - end_text_surface.get_height() / 2))
                     pygame.display.update()
 
             if complete:
                 break
 
-        window.blit(CREDITS_FONT.render("Calculating...", True, BLACK), (50, 50))
+        window.blit(CREDITS_FONT.render("Calculating...", True, BLACK), (50, 70))
         pygame.display.update()
 
         start, end = rooms[start_text], rooms[end_text]
@@ -220,14 +244,16 @@ def main():
         pygame.draw.circle(window, RED, (end.corner_x, end.corner_y), 4)
 
         pygame.draw.rect(window, RED, submit_button)
-        window.blit(TYPING_SIZE_FONT.render("Reset", True, BLACK), (580, 322))
+        reset = TYPING_SIZE_FONT.render("Reset", True, BLACK)
+        window.blit(reset, (620 - reset.get_width() / 2, 355 - reset.get_height() / 2))
 
-        pygame.draw.rect(window, WHITE, (50, 50, 100, 50))
+        pygame.draw.rect(window, WHITE, (50, 70, 100, 50))
+
         text = (f"  Distance: {floor(distance)} ft\n"
                 f"Walking Time: {floor((distance/4)//60)}:{("0" if floor((distance/4)%60) < 10 else "") + str(floor((distance/4)%60))}")
 
         rendered = TYPING_SIZE_FONT.render(text, True, BLACK)
-        multiline_render(window, text, 620 - rendered.get_width() / 4, 250 - rendered.get_height(), TYPING_SIZE_FONT)
+        multiline_render(window, text, 620 - rendered.get_width() / 4, 270 - rendered.get_height(), TYPING_SIZE_FONT)
 
         pygame.display.update()
 
