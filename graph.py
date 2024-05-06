@@ -55,7 +55,7 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
         longitude, latitude, _ = map(float, place.find("ns0:Point", namespaces=namespaces).find("ns0:coordinates", namespaces=namespaces).text.split(","))
 
         original = name
-        name = name[:-2] if name[0] != "S" or name[:2] == "SG" else name
+        name = name[:-2] if (name[0] != "S" or name[:2] == "SG") and name != "D205.3" else name # D205.3 is a dummy value for C201 & D205 adjacency
 
         y_subtraction = 300 if upstairs(name) else 30
 
@@ -68,7 +68,7 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
         else:
             rooms[name] = Node(min_x=longitude, max_x=longitude, min_y=HEIGHT - latitude - y_subtraction, max_y=HEIGHT - latitude - y_subtraction, type_=name)
 
-        if original[-1] == "1" or original[0] == "S" and original[:-2] != "SG":
+        if original[-1] == "1" or original[0] == "S" and original[:-2] != "SG" or name == "D205.3":
             rooms[name].corner_x = longitude
             rooms[name].corner_y = HEIGHT - latitude - y_subtraction
 
@@ -77,20 +77,21 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
     rooms["B201"].adjacent_nodes = [(rooms["A205"], 4), (rooms["B205"], 22.78), (rooms["SB.2"], 22.48)]
     rooms["B205"].adjacent_nodes = [(rooms["A205"], 23.13), (rooms["B201"], 22.78), (rooms["SB.2"], 10.33), (rooms["GB3"], 10.74)]
     rooms["GB3"].adjacent_nodes = [(rooms["B205"], 10.74), (rooms["SB.2"], 12.01), (rooms["BB3"], 7.9)]
-    rooms["BB3"].adjacent_nodes = [(rooms["SB.2"], 19.71), (rooms["GB3"], 7.9), (rooms["C201"], 38.9), (rooms["D205"], 38.67)]
-    rooms["D205"].adjacent_nodes = [(rooms["BB3"], 38.67), (rooms["D206"], 22.17), (rooms["SD.2"], 6.59)]
+    rooms["BB3"].adjacent_nodes = [(rooms["SB.2"], 19.71), (rooms["GB3"], 7.9), (rooms["C201"], 38.9), (rooms["D205.3"], 13.71)]
+    rooms["D205.3"].adjacent_nodes = [(rooms["BB3"], 13.71), (rooms["D205"], 24.96), (rooms["SB.2"], 33.13), (rooms["SD.2"], 26.13)]
+    rooms["D205"].adjacent_nodes = [(rooms["D205.3"], 24.96), (rooms["D206"], 22.17), (rooms["SD.2"], 6.59)]
     rooms["D206"].adjacent_nodes = [(rooms["D205"], 22.17), (rooms["D210"], 16.27), (rooms["SD.2"], 23.77)]
     rooms["D210"].adjacent_nodes = [(rooms["D206"], 16.27), (rooms["D212"], 20.1), (rooms["SD.2"], 39.65), (rooms["E201"], 36.76)]
     rooms["D212"].adjacent_nodes = [(rooms["D210"], 20.1), (rooms["SD.2"], 59.56)]
-    rooms["C201"].adjacent_nodes = [(rooms["BB3"], 38.9), (rooms["C205"], 28.1), (rooms["SC.2"], 35.8)]
+    rooms["C201"].adjacent_nodes = [(rooms["BB3"], 38.9), (rooms["D205.3"], 36.41), (rooms["C205"], 28.1), (rooms["SC.2"], 27.76)]
     rooms["C205"].adjacent_nodes = [(rooms["C201"], 28.1), (rooms["SC.2"], 4.04)]
     rooms["E201"].adjacent_nodes = [(rooms["D210"], 36.76), (rooms["E205"], 28.22), (rooms["SE.2"], 14.96)]
     rooms["E205"].adjacent_nodes = [(rooms["E201"], 28.22), (rooms["SE.2"], 39.47)]
 
     rooms["SA.2"].adjacent_nodes = [(rooms["A201"], 14.56), (rooms["A205"], 43.21), (rooms["SA.1"], STAIRS_DISTANCE)]
-    rooms["SB.2"].adjacent_nodes = [(rooms["B201"], 22.48), (rooms["B205"], 10.33), (rooms["GB3"], 12.01), (rooms["BB3"], 19.71), (rooms["SB.1"], STAIRS_DISTANCE)]
-    rooms["SC.2"].adjacent_nodes = [(rooms["C201"], 35.8), (rooms["C205"], 4.04), (rooms["SC.1"], STAIRS_DISTANCE)]
-    rooms["SD.2"].adjacent_nodes = [(rooms["D205"], 6.59), (rooms["D206"], 23.77), (rooms["D210"], 39.65), (rooms["D212"], 59.56), (rooms["SD.1"], STAIRS_DISTANCE)]
+    rooms["SB.2"].adjacent_nodes = [(rooms["B201"], 22.48), (rooms["B205"], 10.33), (rooms["GB3"], 12.01), (rooms["BB3"], 19.71), (rooms["D205.3"], 33.13), (rooms["SB.1"], STAIRS_DISTANCE)]
+    rooms["SC.2"].adjacent_nodes = [(rooms["C201"], 27.76), (rooms["C205"], 4.04), (rooms["SC.1"], STAIRS_DISTANCE)]
+    rooms["SD.2"].adjacent_nodes = [(rooms["D205"], 6.59), (rooms["D206"], 23.77), (rooms["D210"], 39.65), (rooms["D212"], 59.56), (rooms["D205.3"], 26.13), (rooms["SD.1"], STAIRS_DISTANCE)]
     rooms["SE.2"].adjacent_nodes = [(rooms["E201"], 14.96), (rooms["E205"], 39.47), (rooms["SE.1"], STAIRS_DISTANCE)]
     rooms["SA.1"].adjacent_nodes.append((rooms["SA.2"], STAIRS_DISTANCE))
     rooms["SB.1"].adjacent_nodes.append((rooms["SB.2"], STAIRS_DISTANCE))
@@ -110,6 +111,10 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
         locations[(node.corner_x, node.corner_y)] = node
 
     return rooms, locations
+
+# def octile_heuristic(node: Node, end: Node):
+#     y_difference = abs(node.corner_y - end.corner_y) if upstairs(node) == upstairs(end) else abs(abs(node.corner_y - end.corner_y) - 270)
+#     return (abs(node.corner_x - end.corner_x) + y_difference + (DIAGONAL_DISTANCE - 2) * min(abs(node.corner_x - end.corner_x), y_difference) + (upstairs(node) != upstairs(end)) * STAIRS_DISTANCE) * 1.001
 
 def heuristic(node: Node, end: Node) -> float:
     if upstairs(node) != upstairs(end):
