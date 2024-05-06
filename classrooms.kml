@@ -2503,6 +2503,23 @@
 			<ns0:coordinates>287.9422485136729,193.61400049433541,14.66926754560796</ns0:coordinates>
 		</ns0:Point>
 	</ns0:Placemark>
+	<ns0:Placemark id="0B62FF8DA830397135C6">
+		<ns0:name>D205.3</ns0:name>
+		<ns0:LookAt>
+			<ns0:longitude>262.9820195807042</ns0:longitude>
+			<ns0:latitude>193.61400049433541</ns0:latitude>
+			<ns0:altitude>22.26369837951604</ns0:altitude>
+			<ns0:heading>304.0567137668232</ns0:heading>
+			<ns0:tilt>0</ns0:tilt>
+			<ns1:fovy>35</ns1:fovy>
+			<ns0:range>282.5523193951085</ns0:range>
+			<ns0:altitudeMode>absolute</ns0:altitudeMode>
+		</ns0:LookAt>
+		<ns0:styleUrl>#__managed_style_06C2C74C3130617FD97B</ns0:styleUrl>
+		<ns0:Point>
+			<ns0:coordinates>262.9820195807042,193.61400049433541,14.66926754560796</ns0:coordinates>
+		</ns0:Point>
+	</ns0:Placemark>
 	<ns0:Placemark id="017B22D8883039733C71">
 		<ns0:name>D106.1</ns0:name>
 		<ns0:LookAt>
