@@ -61,6 +61,9 @@ def main():
         window.fill(WHITE)
 
         for node in original.values():
+            if node.type_ == "D205.3":
+                continue
+
             pygame.draw.rect(window, BLACK, (node.min_x, node.min_y, node.max_x - node.min_x, node.max_y - node.min_y), 1)
 
             FONT = None
@@ -136,14 +139,14 @@ def main():
                         start_bad = False
                         end_bad = False
 
-                        if not original.get(start_text):
+                        if not original.get(start_text) or start_text[0] == "S" and start_text != "SG" or start_text == "D205.3":
                             pygame.draw.rect(window, RED, start_text_box, width=5)
                             start_bad = True
 
                         else:
                             pygame.draw.rect(window, BLACK, start_text_box, width=5)
 
-                        if not original.get(end_text):
+                        if not original.get(end_text) or end_text[0] == "S" and end_text != "SG" or end_text == "D205.3":
                             pygame.draw.rect(window, RED, end_text_box, width=5)
                             end_bad = True
 
