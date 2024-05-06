@@ -55,7 +55,7 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
         longitude, latitude, _ = map(float, place.find("ns0:Point", namespaces=namespaces).find("ns0:coordinates", namespaces=namespaces).text.split(","))
 
         original = name
-        name = name[:-2] if (name[0] != "S" or name[:2] == "SG") and name != "D205.3" else name # D205.3 is a dummy value for C201 & D205 adjacency
+        name = name[:-2] if (name[0] != "S" or name[:2] == "SG") and name != "D205.3" else name # D205.3 is a dummy node for C201 & D205 adjacency
 
         y_subtraction = 300 if upstairs(name) else 30
 
