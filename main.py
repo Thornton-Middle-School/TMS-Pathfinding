@@ -2,6 +2,7 @@ import sys
 from heapq import heappush, heappop
 from graph import *
 
+
 def main():
     window = pygame.display.set_mode((LENGTH, HEIGHT))
     window.fill(WHITE)
@@ -53,7 +54,7 @@ def main():
             for x_change in range(-1, 2):
                 for y_change in range(-1, 2):
                     if not (x_change == 0 and y_change == 0) and (
-                    adjacent := locations.get((node.corner_x + x_change, node.corner_y + y_change))):
+                            adjacent := locations.get((node.corner_x + x_change, node.corner_y + y_change))):
                         node.adjacent_nodes.append(
                             (adjacent, 1 if abs(x_change) + abs(y_change) == 1 else DIAGONAL_DISTANCE))
 
@@ -64,14 +65,17 @@ def main():
             if node.type_ == "D205.3":
                 continue
 
-            pygame.draw.rect(window, BLACK, (node.min_x, node.min_y, node.max_x - node.min_x, node.max_y - node.min_y), 1)
+            pygame.draw.rect(window, BLACK, (node.min_x, node.min_y, node.max_x - node.min_x, node.max_y - node.min_y),
+                             1)
 
             FONT = None
 
             if node.type_ in ["GB", "BB", "GB2", "GB3", "BB2", "BB3", "21B", "D110", "D210"]:
                 FONT = MICRO_FONT
 
-            elif node.type_ in ["16A", "20", "29", "28A", "37", "47", "A101", "A201", "A106", "A205", "B101", "B201", "B106", "B205", "D105", "D205", "D106", "D206", "D112", "D212", "E101", "E107", "E201", "E205"]:
+            elif node.type_ in ["16A", "20", "29", "28A", "37", "47", "A101", "A201", "A106", "A205", "B101", "B201",
+                                "B106", "B205", "D105", "D205", "D106", "D206", "D112", "D212", "E101", "E107", "E201",
+                                "E205"]:
                 FONT = TINY_FONT
 
             elif node.type_ in ["Band", "32", "33", "34", "35", "36", "C101", "C201", "C107", "C205"]:
@@ -83,8 +87,15 @@ def main():
             else:
                 FONT = MEDIUM_FONT
 
-            text = FONT.render(node.type_[:-1] if len(node.type_) == 3 and node.type_[1] == "B" else "S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_, True, BLUE)
-            window.blit(text, ((node.min_x + node.max_x) / 2 - text.get_width() / 2, (node.min_y + node.max_y) / 2 - text.get_height() / 2))
+            if len(node.type_) == 3 and node.type_[1] == "B":
+                top = FONT.render(str(node.type_[:-1]), True, BLUE)
+                multiline_render(window, f"{node.type_[:-1]}\n  {node.type_[-1]}", (node.min_x + node.max_x) / 2 - top.get_width() / 2,
+                                 (node.min_y + node.max_y) / 2 - top.get_height() / 2, font=FONT, color=BLUE)
+
+            else:
+                text = FONT.render("S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_, True, BLUE)
+                window.blit(text, ((node.min_x + node.max_x) / 2 - text.get_width() / 2,
+                                   (node.min_y + node.max_y) / 2 - text.get_height() / 2))
 
         window.blit(HUGE_FONT.render("Upstairs", True, BLACK), (205, 20))
         window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (100, 265))
@@ -158,14 +169,16 @@ def main():
                             pygame.display.update()
 
                         else:
-                            pygame.draw.rect(window, WHITE, (620 - INVALID.get_width() / 2, 270 - INVALID.get_height() / 2, INVALID.get_width(), INVALID.get_height()))
+                            pygame.draw.rect(window, WHITE, (
+                            620 - INVALID.get_width() / 2, 270 - INVALID.get_height() / 2, INVALID.get_width(),
+                            INVALID.get_height()))
                             complete = True
 
                     else:
                         current = None
 
                 if event.type == pygame.KEYDOWN:
-                    if current is None:
+                    if current is None or event.key == pygame.K_SPACE:
                         continue
 
                     if event.key == pygame.K_BACKSPACE:
@@ -182,8 +195,11 @@ def main():
                         elif current == end_text_box and len(end_text) < 6:
                             end_text += event.unicode
 
-                    pygame.draw.rect(window, WHITE, (start_text_box.left + 5, start_text_box.top + 5, start_text_box.width - 10, start_text_box.height - 10))
-                    pygame.draw.rect(window, WHITE, (end_text_box.left + 5, end_text_box.top + 5, end_text_box.width - 10, end_text_box.height - 10))
+                    pygame.draw.rect(window, WHITE, (
+                    start_text_box.left + 5, start_text_box.top + 5, start_text_box.width - 10,
+                    start_text_box.height - 10))
+                    pygame.draw.rect(window, WHITE, (
+                    end_text_box.left + 5, end_text_box.top + 5, end_text_box.width - 10, end_text_box.height - 10))
 
                     start_text_surface = TYPING_SIZE_FONT.render(start_text, True, BLACK)
                     end_text_surface = TYPING_SIZE_FONT.render(end_text, True, BLACK)
@@ -200,13 +216,23 @@ def main():
         window.blit(CREDITS_FONT.render("Calculating...", True, BLACK), (50, 70))
         pygame.display.update()
 
-        start, end = rooms[start_text], rooms[end_text]
+        starts, ends = [], []
+
+        if len(end_text) >= 2 and end_text[1] == "B":
+            start, ends = rooms[start_text], ([rooms["BB"], rooms["BB2"], rooms["BB3"]] if end_text[0] == "B"
+                                              else [rooms["GB"], rooms["GB2"], rooms["GB3"]])
+
+        else:
+            start, ends = rooms[start_text], [rooms[end_text]]
 
         priority_queue: tuple[float, Node, float, float] = []
         start.distance = 0
-        heappush(priority_queue, (heuristic(start, end), heuristic(start, end), 0, start))
+
+        heappush(priority_queue, (octile_heuristic(start, ends), octile_heuristic(start, ends), 0, start))
 
         visited = {start}
+
+        best_end = None
 
         while priority_queue:
             _, _, distance, node = heappop(priority_queue)
@@ -214,18 +240,21 @@ def main():
             if distance > node.distance:
                 continue
 
-            if node == end:
+            if node in ends:
+                best_end = node
                 break
 
             for adjacent, edge_weight in node.adjacent_nodes:
                 if adjacent.distance > distance + edge_weight:
                     adjacent.from_ = (node, edge_weight)
                     adjacent.distance = distance + edge_weight
-                    heappush(priority_queue, (heuristic(adjacent, end) + distance + edge_weight,
-                                                   heuristic(adjacent, end), distance + edge_weight, adjacent))
+
+                    heappush(priority_queue, (octile_heuristic(adjacent, ends) + distance + edge_weight,
+                                                    octile_heuristic(adjacent, ends), distance + edge_weight, adjacent))
+
                     visited.add(adjacent)
 
-        node = end
+        node = best_end
         distance = 0.0
 
         while node.from_ is not None:
@@ -245,7 +274,7 @@ def main():
             node.distance = float("inf")
 
         pygame.draw.circle(window, GREEN, (start.corner_x, start.corner_y), 4)
-        pygame.draw.circle(window, RED, (end.corner_x, end.corner_y), 4)
+        pygame.draw.circle(window, RED, (best_end.corner_x, best_end.corner_y), 4)
 
         pygame.draw.rect(window, RED, submit_button)
         reset = TYPING_SIZE_FONT.render("Reset", True, BLACK)
@@ -254,7 +283,7 @@ def main():
         pygame.draw.rect(window, WHITE, (50, 70, 100, 50))
 
         text = (f"  Distance: {floor(distance)} ft\n"
-                f"Walking Time: {floor((distance/4)//60)}:{("0" if floor((distance/4)%60) < 10 else "") + str(floor((distance/4)%60))}")
+                f"Walking Time: {floor((distance / 4) // 60)}:{("0" if floor((distance / 4) % 60) < 10 else "") + str(floor((distance / 4) % 60))}")
 
         rendered = TYPING_SIZE_FONT.render(text, True, BLACK)
         multiline_render(window, text, 620 - rendered.get_width() / 4, 270 - rendered.get_height(), TYPING_SIZE_FONT)
