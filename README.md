@@ -12,7 +12,7 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 
 2. Click the Submit button.
 3. The shortest path will be shown in orange and a green and red dot for the starting and ending positions respectively. The distance and predicted walking time (assumes you walk at 4 ft/second) are displayed on the right. Otheriwse, "Invalid Input" is displayed on the right in red, and so are the invalid inputs.
-  - If you type "BB" or "GB" (boys'/girls' bathroom) and then a number from 1-3 (there are three bathrooms for each gender) as the ending position, then the shortest path among that of all three bathrooms will be displayed. 
+  - If you type "BB" or "GB" (boys'/girls' bathroom) and then a number from 2-3 (or nothing; there are three bathrooms for each gender) as the ending position, then the shortest path among that of all three bathrooms will be displayed. 
 
 5. If you want to enter in more rooms, press "Reset".
 
