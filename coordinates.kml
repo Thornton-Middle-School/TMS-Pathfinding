@@ -2504,6 +2504,23 @@
 			<coordinates>-122.0161515213543,37.55725198091973,14.66926754560796</coordinates>
 		</Point>
 	</Placemark>
+	<Placemark id="0DC45D0F69308677FCF6">
+		<name>D205.3</name>
+		<LookAt>
+			<longitude>-122.0161985274697</longitude>
+			<latitude>37.55722566838587</latitude>
+			<altitude>22.12780086722597</altitude>
+			<heading>302.0000096180611</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30</gx:fovy>
+			<range>277.8050139614425</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_0DF36F756030816420FB</styleUrl>
+		<Point>
+			<coordinates>-122.0162507828723,37.55714248209975,21.97228859370595</coordinates>
+		</Point>
+	</Placemark>
 	<Placemark id="017B22D8883039733C71">
 		<name>D106.1</name>
 		<LookAt>
