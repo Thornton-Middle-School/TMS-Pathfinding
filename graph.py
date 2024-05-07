@@ -55,7 +55,7 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
         longitude, latitude, _ = map(float, place.find("ns0:Point", namespaces=namespaces).find("ns0:coordinates", namespaces=namespaces).text.split(","))
 
         original = name
-        name = name[:-2] if (name[0] != "S" or name[:2] == "SG") and name != "D205.3" else name # D205.3 is a dummy node for C201 & D205 adjacency
+        name = name[:-2] if (name[0] != "S" or name[:2] == "SG") and name != "D205.3" else name # D205.3 is a dummy value for C201 & D205 adjacency
 
         y_subtraction = 300 if upstairs(name) else 30
 
@@ -112,9 +112,14 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
 
     return rooms, locations
 
-# def octile_heuristic(node: Node, end: Node):
-#     y_difference = abs(node.corner_y - end.corner_y) if upstairs(node) == upstairs(end) else abs(abs(node.corner_y - end.corner_y) - 270)
-#     return (abs(node.corner_x - end.corner_x) + y_difference + (DIAGONAL_DISTANCE - 2) * min(abs(node.corner_x - end.corner_x), y_difference) + (upstairs(node) != upstairs(end)) * STAIRS_DISTANCE) * 1.001
+def octile_heuristic(node: Node, ends: list[Node]):
+    minimum = float("inf")
+
+    for end in ends:
+        y_difference = abs(node.corner_y - end.corner_y) if upstairs(node) == upstairs(end) else abs(abs(node.corner_y - end.corner_y) - 270)
+        minimum = min(minimum, (abs(node.corner_x - end.corner_x) + y_difference + (DIAGONAL_DISTANCE - 2) * min(abs(node.corner_x - end.corner_x), y_difference) + (upstairs(node) != upstairs(end)) * STAIRS_DISTANCE) * 1.001)
+
+    return minimum
 
 def heuristic(node: Node, end: Node) -> float:
     if upstairs(node) != upstairs(end):
@@ -122,9 +127,9 @@ def heuristic(node: Node, end: Node) -> float:
 
     return sqrt((node.corner_x - end.corner_x) ** 2 + (node.corner_y - end.corner_y) ** 2) * 1.001
 
-def multiline_render(window: pygame.surface, text: str, start_x: float, start_y: float, font: pygame.font.Font) -> None:
+def multiline_render(window: pygame.surface, text: str, start_x: float, start_y: float, font: pygame.font.Font, color=BLACK) -> None:
     x, y = start_x, start_y
 
     for line in text.split("\n"):
-        window.blit(font.render(line, True, BLACK), (x, y))
+        window.blit(font.render(line, True, color), (x, y))
         y += font.get_height()
