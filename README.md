@@ -6,7 +6,7 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 - Pygame 2.5.2
 
 ## Instructions
-#### Downloading the app:
+#### Downloading the app
 1. Go to the releases page on the right
 2. Scroll down to the bottom
 3. Download TMSPathfinding.exe
