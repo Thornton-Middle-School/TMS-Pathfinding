@@ -2507,7 +2507,7 @@
 		<ns0:name>D205.3</ns0:name>
 		<ns0:LookAt>
 			<ns0:longitude>260.49040111786326</ns0:longitude>
-			<ns0:latitude>196.6345310734141</ns0:latitude>
+			<ns0:latitude>193.61400049433541</ns0:latitude>
 			<ns0:altitude>22.12780086722597</ns0:altitude>
 			<ns0:heading>302.0000096180611</ns0:heading>
 			<ns0:tilt>0</ns0:tilt>
@@ -2517,7 +2517,7 @@
 		</ns0:LookAt>
 		<ns0:styleUrl>#__managed_style_0DF36F756030816420FB</ns0:styleUrl>
 		<ns0:Point>
-			<ns0:coordinates>260.49040111786326,196.6345310734141,21.97228859370595</ns0:coordinates>
+			<ns0:coordinates>260.49040111786326,193.61400049433541,21.97228859370595</ns0:coordinates>
 		</ns0:Point>
 	</ns0:Placemark>
 	<ns0:Placemark id="017B22D8883039733C71">
