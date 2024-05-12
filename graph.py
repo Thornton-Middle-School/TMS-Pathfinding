@@ -77,9 +77,9 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
     rooms["B201"].adjacent_nodes = [(rooms["A205"], 4), (rooms["B205"], 22.78), (rooms["SB.2"], 22.48)]
     rooms["B205"].adjacent_nodes = [(rooms["A205"], 23.13), (rooms["B201"], 22.78), (rooms["SB.2"], 10.33), (rooms["GB3"], 10.74)]
     rooms["GB3"].adjacent_nodes = [(rooms["B205"], 10.74), (rooms["SB.2"], 12.01), (rooms["BB3"], 7.9)]
-    rooms["BB3"].adjacent_nodes = [(rooms["SB.2"], 19.71), (rooms["GB3"], 7.9), (rooms["C201"], 38.9), (rooms["D205.3"], 13.71)]
-    rooms["D205.3"].adjacent_nodes = [(rooms["BB3"], 13.71), (rooms["D205"], 24.96), (rooms["SB.2"], 33.13), (rooms["SD.2"], 26.13)]
-    rooms["D205"].adjacent_nodes = [(rooms["D205.3"], 24.96), (rooms["D206"], 22.17), (rooms["SD.2"], 6.59)]
+    rooms["BB3"].adjacent_nodes = [(rooms["SB.2"], 19.71), (rooms["GB3"], 7.9), (rooms["C201"], 38.9), (rooms["D205.3"], 11.22)]
+    rooms["D205.3"].adjacent_nodes = [(rooms["BB3"], 11.22), (rooms["D205"], 27.46), (rooms["SB.2"], 30.83), (rooms["SD.2"], 28.55)]
+    rooms["D205"].adjacent_nodes = [(rooms["D205.3"], 27.46), (rooms["D206"], 22.17), (rooms["SD.2"], 6.59)]
     rooms["D206"].adjacent_nodes = [(rooms["D205"], 22.17), (rooms["D210"], 16.27), (rooms["SD.2"], 23.77)]
     rooms["D210"].adjacent_nodes = [(rooms["D206"], 16.27), (rooms["D212"], 20.1), (rooms["SD.2"], 39.65), (rooms["E201"], 36.76)]
     rooms["D212"].adjacent_nodes = [(rooms["D210"], 20.1), (rooms["SD.2"], 59.56)]
@@ -89,9 +89,9 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
     rooms["E205"].adjacent_nodes = [(rooms["E201"], 28.22), (rooms["SE.2"], 39.47)]
 
     rooms["SA.2"].adjacent_nodes = [(rooms["A201"], 14.56), (rooms["A205"], 43.21), (rooms["SA.1"], STAIRS_DISTANCE)]
-    rooms["SB.2"].adjacent_nodes = [(rooms["B201"], 22.48), (rooms["B205"], 10.33), (rooms["GB3"], 12.01), (rooms["BB3"], 19.71), (rooms["D205.3"], 33.13), (rooms["SB.1"], STAIRS_DISTANCE)]
+    rooms["SB.2"].adjacent_nodes = [(rooms["B201"], 22.48), (rooms["B205"], 10.33), (rooms["GB3"], 12.01), (rooms["BB3"], 19.71), (rooms["D205.3"], 30.83), (rooms["SB.1"], STAIRS_DISTANCE)]
     rooms["SC.2"].adjacent_nodes = [(rooms["C201"], 27.76), (rooms["C205"], 4.04), (rooms["SC.1"], STAIRS_DISTANCE)]
-    rooms["SD.2"].adjacent_nodes = [(rooms["D205"], 6.59), (rooms["D206"], 23.77), (rooms["D210"], 39.65), (rooms["D212"], 59.56), (rooms["D205.3"], 26.13), (rooms["SD.1"], STAIRS_DISTANCE)]
+    rooms["SD.2"].adjacent_nodes = [(rooms["D205"], 6.59), (rooms["D206"], 23.77), (rooms["D210"], 39.65), (rooms["D212"], 59.56), (rooms["D205.3"], 28.55), (rooms["SD.1"], STAIRS_DISTANCE)]
     rooms["SE.2"].adjacent_nodes = [(rooms["E201"], 14.96), (rooms["E205"], 39.47), (rooms["SE.1"], STAIRS_DISTANCE)]
     rooms["SA.1"].adjacent_nodes.append((rooms["SA.2"], STAIRS_DISTANCE))
     rooms["SB.1"].adjacent_nodes.append((rooms["SB.2"], STAIRS_DISTANCE))
