@@ -11,6 +11,8 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 2. Scroll down to the bottom
 3. Download TMSPathfinding.exe
 
+https://drive.google.com/file/d/1aeKbPn9trmSMnZFZG-2qBPAZ8cfzjj_P/view?usp=sharing
+
 #### Using the app
 1. Using the map shown, enter in your starting and ending room
   - The inputs must be the exact same as the name on the map. For example, if you start in room 1, you can not input "One" or "Room 1" (you have to type "1").
