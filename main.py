@@ -1,10 +1,7 @@
 import sys
 from heapq import heappush, heappop
-
 import pygame
-
 from graph import *
-
 
 def main():
     window = pygame.display.set_mode((LENGTH, HEIGHT))
