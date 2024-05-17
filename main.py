@@ -1,5 +1,8 @@
 import sys
 from heapq import heappush, heappop
+
+import pygame
+
 from graph import *
 
 
@@ -25,8 +28,8 @@ def main():
             min_y = min(min_y, node.corner_y)
             max_y = max(max_y, node.corner_y)
 
-    for x in range(min_x, max_x + 1):
-        for y in range(min_y, max_y + 1):
+    for x in drange(min_x, max_x + 1, 1):
+        for y in drange(min_y, max_y + 1, 1):
             if locations.get((x, y)):
                 continue
 
@@ -51,8 +54,8 @@ def main():
 
     for node in rooms.values():
         if not upstairs(node) or node.type_ == "empty":
-            for x_change in range(-1, 2):
-                for y_change in range(-1, 2):
+            for x_change in drange(-1, 2, 1):
+                for y_change in drange(-1, 2, 1):
                     if not (x_change == 0 and y_change == 0) and (
                             adjacent := locations.get((node.corner_x + x_change, node.corner_y + y_change))):
                         node.adjacent_nodes.append(
@@ -178,10 +181,38 @@ def main():
                         current = None
 
                 if event.type == pygame.KEYDOWN:
-                    if current is None or event.key == pygame.K_SPACE:
+                    if current in [None, pygame.K_SPACE]:
                         continue
 
-                    if event.key == pygame.K_BACKSPACE:
+                    if event.key == pygame.K_RETURN:
+                        start_bad = False
+                        end_bad = False
+
+                        if not original.get(start_text) or start_text[0] == "S" and start_text != "SG" or start_text == "D205.3":
+                            pygame.draw.rect(window, RED, start_text_box, width=5)
+                            start_bad = True
+
+                        else:
+                            pygame.draw.rect(window, BLACK, start_text_box, width=5)
+
+                        if not original.get(end_text) or end_text[0] == "S" and end_text != "SG" or end_text == "D205.3":
+                            pygame.draw.rect(window, RED, end_text_box, width=5)
+                            end_bad = True
+
+                        else:
+                            pygame.draw.rect(window, BLACK, end_text_box, width=5)
+
+                        if start_bad or end_bad:
+                            window.blit(INVALID, (620 - INVALID.get_width() / 2, 270 - INVALID.get_height() / 2))
+                            pygame.display.update()
+
+                        else:
+                            pygame.draw.rect(window, WHITE, (
+                            620 - INVALID.get_width() / 2, 270 - INVALID.get_height() / 2, INVALID.get_width(),
+                            INVALID.get_height()))
+                            complete = True
+
+                    elif event.key == pygame.K_BACKSPACE:
                         if current == start_text_box:
                             start_text = start_text[:-1]
 
@@ -189,11 +220,14 @@ def main():
                             end_text = end_text[:-1]
 
                     else:
-                        if current == start_text_box and len(start_text) < 6:
-                            start_text += event.unicode
+                        start_text_surface_original = TYPING_SIZE_FONT.render(start_text + event.unicode.upper(), True, BLACK)
+                        end_text_surface_original = TYPING_SIZE_FONT.render(end_text + event.unicode.upper(), True, BLACK)
 
-                        elif current == end_text_box and len(end_text) < 6:
-                            end_text += event.unicode
+                        if current == start_text_box and start_text_surface_original.get_width() < start_text_box.width - 10:
+                            start_text += event.unicode.upper()
+
+                        elif current == end_text_box and end_text_surface_original.get_width() < end_text_box.width - 10:
+                            end_text += event.unicode.upper()
 
                     pygame.draw.rect(window, WHITE, (
                     start_text_box.left + 5, start_text_box.top + 5, start_text_box.width - 10,
@@ -216,7 +250,7 @@ def main():
         window.blit(CREDITS_FONT.render("Calculating...", True, BLACK), (50, 70))
         pygame.display.update()
 
-        starts, ends = [], []
+        start, ends = [], []
 
         if len(end_text) >= 2 and end_text[1] == "B":
             start, ends = rooms[start_text], ([rooms["BB"], rooms["BB2"], rooms["BB3"]] if end_text[0] == "B"
@@ -228,7 +262,8 @@ def main():
         priority_queue: tuple[float, Node, float, float] = []
         start.distance = 0
 
-        heappush(priority_queue, (octile_heuristic(start, ends), octile_heuristic(start, ends), 0, start))
+        start_heuristic = overall_heuristic(start, ends, octile_heuristic)
+        heappush(priority_queue, (start_heuristic, start_heuristic, 0, start))
 
         visited = {start}
 
@@ -249,8 +284,9 @@ def main():
                     adjacent.from_ = (node, edge_weight)
                     adjacent.distance = distance + edge_weight
 
-                    heappush(priority_queue, (octile_heuristic(adjacent, ends) + distance + edge_weight,
-                                                    octile_heuristic(adjacent, ends), distance + edge_weight, adjacent))
+                    prediction = overall_heuristic(adjacent, ends, octile_heuristic)
+                    heappush(priority_queue, (prediction + distance + edge_weight,
+                                                    prediction, distance + edge_weight, adjacent))
 
                     visited.add(adjacent)
 
