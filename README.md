@@ -11,8 +11,6 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 2. Scroll down to the bottom
 3. Download TMSPathfinding.exe
 
-https://drive.google.com/file/d/1aeKbPn9trmSMnZFZG-2qBPAZ8cfzjj_P/view?usp=sharing
-
 #### Using the app
 1. Using the map shown, enter in your starting and ending room
   - The inputs must be the exact same as the name on the map. For example, if you start in room 1, you can not input "One" or "Room 1" (you have to type "1").
@@ -22,10 +20,12 @@ https://drive.google.com/file/d/1aeKbPn9trmSMnZFZG-2qBPAZ8cfzjj_P/view?usp=shari
 2. Click the Submit button or press "Enter"/"Return" on your keyboard.
   - Invalid Input will be displayed if the input criteria aren't met (the corresponding text boxes will be in red). If this is the case, go back to step 1.  
    
-4. After at most a couple seconds, the shortest path will be shown in orange and a green and red dot for the starting and ending positions respectively. The distance and predicted walking time (assumes you walk at 4 ft/second) are displayed on the right. Otheriwse, "Invalid Input" is displayed on the right in red, and so are the invalid inputs.
+3. After at most a couple seconds, the shortest path will be shown in orange and a green and red dot for the starting and ending positions respectively. The distance and predicted walking time (assumes you walk at 4 ft/second) are displayed on the right. Otheriwse, "Invalid Input" is displayed on the right in red, and so are the invalid inputs.
   - If you type "BB" or "GB" (boys'/girls' bathroom) and then a number from 2-3 (or nothing to represent 1; there are three bathrooms for each gender) as the ending position, then the shortest path among that of all three bathrooms will be displayed. 
 
 4. If you want to enter in more rooms, press "Reset".
+
+####[https://drive.google.com/file/d/1aeKbPn9trmSMnZFZG-2qBPAZ8cfzjj_P/view?usp=sharing](Tutorial)
 
 ## Example Input & Path
 ![image](https://github.com/Pramad712/Thornton-Shortest-Paths/assets/77818951/3d480c4b-c526-4bc5-b5a6-b502f9dcc323)
