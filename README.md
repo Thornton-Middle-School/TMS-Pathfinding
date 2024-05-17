@@ -25,7 +25,7 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 
 4. If you want to enter in more rooms, press "Reset".
 
-####[https://drive.google.com/file/d/1aeKbPn9trmSMnZFZG-2qBPAZ8cfzjj_P/view?usp=sharing](Tutorial)
+### [Click this hyperlink to watch a quick video on how to download & use this app.](https://drive.google.com/file/d/1aeKbPn9trmSMnZFZG-2qBPAZ8cfzjj_P/view?usp=sharing)
 
 ## Example Input & Path
 ![image](https://github.com/Pramad712/Thornton-Shortest-Paths/assets/77818951/3d480c4b-c526-4bc5-b5a6-b502f9dcc323)
