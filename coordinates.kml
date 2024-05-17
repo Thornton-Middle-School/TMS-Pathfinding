@@ -1929,8 +1929,8 @@
 	<Placemark id="016008BB2F30393F5363">
 		<name>LG.1</name>
 		<LookAt>
-			<longitude>-122.0170959307235</longitude>
-			<latitude>37.55643339728237</latitude>
+			<longitude>-122.01718394799545</longitude>
+			<latitude>37.55660223196705</latitude>
 			<altitude>24.66328999035717</altitude>
 			<heading>-57.94276603998566</heading>
 			<tilt>0.1858418234715603</tilt>
@@ -1940,14 +1940,14 @@
 		</LookAt>
 		<styleUrl>#__managed_style_06C2C74C3130617FD97B</styleUrl>
 		<Point>
-			<coordinates>-122.016844899036,37.55638205099824,23.43388385565794</coordinates>
+			<coordinates>-122.01718394799545,37.55660223196705,23.43388385565794</coordinates>
 		</Point>
 	</Placemark>
 	<Placemark id="045E7B560B30393FC0A5">
 		<name>LG.2</name>
 		<LookAt>
-			<longitude>-122.0170853149609</longitude>
-			<latitude>37.55643372646875</latitude>
+			<longitude>-122.01703068737528</longitude>
+			<latitude>37.5560959620439</latitude>
 			<altitude>24.66330859156896</altitude>
 			<heading>-57.94276594473632</heading>
 			<tilt>0.1858416745410886</tilt>
@@ -1957,7 +1957,7 @@
 		</LookAt>
 		<styleUrl>#__managed_style_06C2C74C3130617FD97B</styleUrl>
 		<Point>
-			<coordinates>-122.0173697363348,37.55631614301258,14.46955077168403</coordinates>
+			<coordinates>-122.01703068737528,37.5560959620439,14.46955077168403</coordinates>
 		</Point>
 	</Placemark>
 	<Placemark id="0062D65DC930394011E7">
