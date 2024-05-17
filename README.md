@@ -38,7 +38,9 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 - The estimated time to walk that path is also on the right (1 minute and 46 seconds)
 - The part of the path that is upstairs may not seem optimal. However, there is a railing around the classrooms.
 
-  ### Credits
-  - My 7th grade semester 2 elective teacher - Mr. Register (this repository was my creation for the final project)
-  - The creators & contributors to Google Earth - without them, the map would have been very inaccurate
+### Credits
+- My 7th grade semester 2 elective teacher - Mr. Register (this repository was my creation for the final project)
+  - [Website (See First)](https://www.mrregister.net/dmar/pac/)
+  - [Slides](https://docs.google.com/presentation/d/13CrYPWNvLuQdbOzuMGqDqK9tXmr_1G2xm4wCXP9lbLA/edit#slide=id.p)  
+- The creators & contributors to Google Earth - without them, the map would have been very inaccurate
 
