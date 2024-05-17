@@ -112,20 +112,18 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
 
     return rooms, locations
 
-def octile_heuristic(node: Node, ends: list[Node]):
-    minimum = float("inf")
+def octile_heuristic(node: Node, end: list[Node]):
+    y_difference = abs(node.corner_y - end.corner_y) if upstairs(node) == upstairs(end) else abs(abs(node.corner_y - end.corner_y) - 270)
+    return (abs(node.corner_x - end.corner_x) + y_difference + (DIAGONAL_DISTANCE - 2) * min(abs(node.corner_x - end.corner_x), y_difference) + (upstairs(node) != upstairs(end)) * STAIRS_DISTANCE) * 1.001
 
-    for end in ends:
-        y_difference = abs(node.corner_y - end.corner_y) if upstairs(node) == upstairs(end) else abs(abs(node.corner_y - end.corner_y) - 270)
-        minimum = min(minimum, (abs(node.corner_x - end.corner_x) + y_difference + (DIAGONAL_DISTANCE - 2) * min(abs(node.corner_x - end.corner_x), y_difference) + (upstairs(node) != upstairs(end)) * STAIRS_DISTANCE) * 1.001)
-
-    return minimum
-
-def heuristic(node: Node, end: Node) -> float:
+def euclidean_heuristic(node: Node, end: Node) -> float:
     if upstairs(node) != upstairs(end):
         return (sqrt((node.corner_x - end.corner_x) ** 2 + (abs(node.corner_y - end.corner_y) - 270) ** 2) + STAIRS_DISTANCE) * 1.001
 
     return sqrt((node.corner_x - end.corner_x) ** 2 + (node.corner_y - end.corner_y) ** 2) * 1.001
+
+def overall_heuristic(node: Node, ends: list[Node], hueristic_function):
+    return min(hueristic_function(node, end) for end in ends)
 
 def multiline_render(window: pygame.surface, text: str, start_x: float, start_y: float, font: pygame.font.Font, color=BLACK) -> None:
     x, y = start_x, start_y
@@ -133,3 +131,10 @@ def multiline_render(window: pygame.surface, text: str, start_x: float, start_y:
     for line in text.split("\n"):
         window.blit(font.render(line, True, color), (x, y))
         y += font.get_height()
+
+def drange(start: int | float, end: int | float, step: int | float = 1):
+    value = start
+
+    while value < end:
+        yield value
+        value += step
