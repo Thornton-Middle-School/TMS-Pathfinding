@@ -43,4 +43,6 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
   - [Website (See First)](https://www.mrregister.net/dmar/pac/)
   - [Slides](https://docs.google.com/presentation/d/1HcD0SSQhEydkitxebxhG70NtDNg3fa_p24LJYXlT_oA/edit?usp=sharing)
 - The creators & contributors to Google Earth - without them, the map would have been very inaccurate
+  - [Link for emails with the domain @fusdk12.net](https://earth.google.com/earth/d/1Qp8S96DS1JuBOxh_XNvjW5HNAKhdmVZ8?usp=sharing)
+  - [Link for other emails](https://www.google.com/maps/d/edit?mid=14eqk4JiOht_bZ2ebgf1ISgn5-DIaLRo&usp=sharing)
 
