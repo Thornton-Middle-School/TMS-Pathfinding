@@ -9,7 +9,7 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 #### Downloading the app
 1. Go to the releases page on the right
 2. Scroll down to the bottom
-3. Download TMSPathfinding.exe
+3. Download the corresponding file for your OS (the .exe is for Windows, the Linux.tar.gz is for Linux)
 
 #### Using the app
 1. Using the map shown, enter in your starting and ending room
@@ -39,10 +39,7 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 - The part of the path that is upstairs may not seem optimal. However, there is a railing around the classrooms.
 
 ### Credits
-- My 7th grade semester 2 elective teacher - Mr. Register (this repository was my creation for the final project)
-  - [Website (See First)](https://www.mrregister.net/dmar/pac/)
-  - [Slides](https://docs.google.com/presentation/d/1HcD0SSQhEydkitxebxhG70NtDNg3fa_p24LJYXlT_oA/edit?usp=sharing) (has some out-of-date information and code)
+- The Thornton STEM Elective Teacher - Mr. Register, for help throughout the beginning development process, as this was the final project in Programming & App Creators Semester 2 2023-24
 - The creators & contributors to Google Earth - without them, the map would have been very inaccurate
   - [Link for emails with the domain @fusdk12.net](https://earth.google.com/earth/d/1Qp8S96DS1JuBOxh_XNvjW5HNAKhdmVZ8?usp=sharing)
   - [Link for other emails](https://www.google.com/maps/d/edit?mid=14eqk4JiOht_bZ2ebgf1ISgn5-DIaLRo&usp=sharing)
-
