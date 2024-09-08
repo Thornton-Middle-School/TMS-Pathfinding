@@ -316,7 +316,7 @@ def main():
         pygame.draw.rect(window, WHITE, (50, 70, 100, 50))
 
         text = (f"  Distance: {floor(distance)} ft\n"
-                f"Walking Time: {floor((distance / 4) // 60)}:{("0" if floor((distance / 4) % 60) < 10 else "") + str(floor((distance / 4) % 60))}")
+                f"Walking Time: {floor((distance / 4) // 60)}:{('0' if floor((distance / 4) % 60) < 10 else '') + str(floor((distance / 4) % 60))}")
 
         rendered = TYPING_SIZE_FONT.render(text, True, BLACK)
         multiline_render(window, text, 620 - rendered.get_width() / 4, 270 - rendered.get_height(), TYPING_SIZE_FONT)
