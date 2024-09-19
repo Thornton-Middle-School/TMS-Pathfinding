@@ -114,14 +114,6 @@ def main():
         submit = TYPING_SIZE_FONT.render("Submit", True, BLACK)
         window.blit(submit, (620 - submit.get_width() / 2, 365 - submit.get_height() / 2))
 
-        credits_text = ("Credits to:\n"
-                        "The creator: Pranav Maddineedi\n"
-                        "Mr. Register for measurements & the opportunity\n"
-                        "to make this app\n"
-                        "The creators of Google Earth for making a\n"
-                        "product that contributed to the map's accuracy\n")
-
-        multiline_render(window, credits_text, 445, 455, CREDITS_FONT)
         pygame.display.update()
 
         start_text = ""
