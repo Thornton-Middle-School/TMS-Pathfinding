@@ -116,10 +116,11 @@ def main():
         key_text = ("Key:\n"
                     "BB/GB (very small font): Boys/Girls Bathroom\n"
                     "LG/SG: Large/Small Gym\n"
-                    "BLR/GLR: Boys/Girls Locker Room")
+                    "BLR/GLR: Boys/Girls Locker Room\n"
+                    "S: Stairs")
 
         width = max(KEY_FONT.render(line, True, BLACK).get_width() for line in key_text.split("\n"))
-        multiline_render(window, key_text, 620 - width / 2, HEIGHT - 30 - KEY_FONT.get_height() * 4, KEY_FONT)
+        multiline_render(window, key_text, 620 - width / 2, HEIGHT - 30 - KEY_FONT.get_height() * 5, KEY_FONT)
 
         pygame.display.update()
 
