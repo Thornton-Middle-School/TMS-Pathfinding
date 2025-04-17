@@ -176,10 +176,10 @@ def main():
                                                                             BLACK)
 
                         if current == start_text_box and start_text_surface_original.get_width() < start_text_box.width - 10:
-                            start_text += event.unicode.upper()
+                            start_text += event.unicode
 
                         elif current == end_text_box and end_text_surface_original.get_width() < end_text_box.width - 10:
-                            end_text += event.unicode.upper()
+                            end_text += event.unicode
 
                     pygame.draw.rect(window, WHITE, (
                         start_text_box.left + 5, start_text_box.top + 5, start_text_box.width - 10,
@@ -317,7 +317,6 @@ def main():
 
             if reset:
                 break
-
 
 if __name__ == "__main__":
     main()
