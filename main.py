@@ -1,7 +1,7 @@
 import sys
 from heapq import heappush, heappop
-import pygame
 from graph import *
+
 
 def main():
     window = pygame.display.set_mode((LENGTH, HEIGHT))
@@ -68,78 +68,80 @@ def main():
             pygame.draw.rect(window, BLACK, (node.min_x, node.min_y, node.max_x - node.min_x, node.max_y - node.min_y),
                              1)
 
-            FONT = None
-
             if node.type_ in ["GB", "BB", "GB2", "GB3", "BB2", "BB3", "21B", "D110", "D210"]:
-                FONT = MICRO_FONT
+                font = MICRO_FONT
 
             elif node.type_ in ["16A", "20", "29", "28A", "37", "47", "A101", "A201", "A106", "A205", "B101", "B201",
                                 "B106", "B205", "D105", "D205", "D106", "D206", "D112", "D212", "E101", "E107", "E201",
                                 "E205"]:
-                FONT = TINY_FONT
+                font = TINY_FONT
 
             elif node.type_ in ["Band", "32", "33", "34", "35", "36", "C101", "C201", "C107", "C205"]:
-                FONT = MINI_FONT
+                font = MINI_FONT
 
             elif node.type_ in ["SG", "LG"]:
-                FONT = BIG_FONT
+                font = BIG_FONT
 
             else:
-                FONT = MEDIUM_FONT
+                font = MEDIUM_FONT
 
             if len(node.type_) == 3 and node.type_[1] == "B":
-                top = FONT.render(str(node.type_[:-1]), True, BLUE)
-                multiline_render(window, f"{node.type_[:-1]}\n  {node.type_[-1]}", (node.min_x + node.max_x) / 2 - top.get_width() / 2,
-                                 (node.min_y + node.max_y) / 2 - top.get_height() / 2, font=FONT, color=BLUE)
+                top = font.render(str(node.type_[:-1]), True, BLUE)
+                multiline_render(window, f"{node.type_[:-1]}\n  {node.type_[-1]}",
+                                 (node.min_x + node.max_x) / 2 - top.get_width() / 2,
+                                 (node.min_y + node.max_y) / 2 - top.get_height() / 2, font=font, color=BLUE)
 
             else:
-                text = FONT.render("S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_, True, BLUE)
+                text = font.render("S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_, True, BLUE)
                 window.blit(text, ((node.min_x + node.max_x) / 2 - text.get_width() / 2,
                                    (node.min_y + node.max_y) / 2 - text.get_height() / 2))
 
         window.blit(HUGE_FONT.render("Upstairs", True, BLACK), (205, 20))
         window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (100, 265))
 
-        window.blit(TYPING_SIZE_FONT.render("Start: ", True, BLACK), (490, 66))
-        window.blit(TYPING_SIZE_FONT.render("  End: ", True, BLACK), (490, 162))
+        window.blit(TYPING_SIZE_FONT.render("Start: ", True, BLACK), (490, 140))
+        window.blit(TYPING_SIZE_FONT.render("  End: ", True, BLACK), (490, 236))
 
-        start_text_box = pygame.Rect(620, 63, 120, 50)
-        end_text_box = pygame.Rect(620, 156, 120, 50)
-        submit_button = pygame.Rect(560, 340, 120, 50)
+        start_text_box = pygame.Rect(620, 127, 120, 50)
+        end_text_box = pygame.Rect(620, 230, 120, 50)
+        submit_button = pygame.Rect(560, 414, 120, 50)
 
         pygame.draw.rect(window, BLACK, start_text_box, width=5)
         pygame.draw.rect(window, BLACK, end_text_box, width=5)
         pygame.draw.rect(window, GREEN, submit_button)
 
         submit = TYPING_SIZE_FONT.render("Submit", True, BLACK)
-        window.blit(submit, (620 - submit.get_width() / 2, 365 - submit.get_height() / 2))
+        window.blit(submit, (620 - submit.get_width() / 2, 439 - submit.get_height() / 2))
 
-        credits_text = ("Credits to:\n"
-                        "The creator: Pranav Maddineedi\n"
-                        "Mr. Register for measurements & the opportunity\n"
-                        "to make this app\n"
-                        "The creators of Google Earth for making a\n"
-                        "product that contributed to the map's accuracy\n")
+        key_text = ("Key:\n"
+                    "BB/GB (very small font): Boys/Girls Bathroom\n"
+                    "LG/SG: Large/Small Gym\n"
+                    "BLR/GLR: Boys/Girls Locker Room")
 
-        multiline_render(window, credits_text, 445, 455, CREDITS_FONT)
+        width = max(KEY_FONT.render(line, True, BLACK).get_width() for line in key_text.split("\n"))
+        multiline_render(window, key_text, 620 - width / 2, HEIGHT - 30 - KEY_FONT.get_height() * 4, KEY_FONT)
+
         pygame.display.update()
 
         start_text = ""
         end_text = ""
         current = None
 
-        INVALID = TYPING_SIZE_FONT.render("Invalid Input", True, RED)
+        invalid_surface = TYPING_SIZE_FONT.render("Invalid Input", True, RED)
 
         complete = False
 
         while True:
             for event in pygame.event.get():
+                submit = False
+
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
 
                 if event.type == pygame.MOUSEBUTTONUP:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
+
                     if start_text_box.left < mouse_x < start_text_box.right and start_text_box.top < mouse_y < start_text_box.bottom:
                         current = start_text_box
 
@@ -147,32 +149,7 @@ def main():
                         current = end_text_box
 
                     elif submit_button.left < mouse_x < submit_button.right and submit_button.top < mouse_y < submit_button.right:
-                        start_bad = False
-                        end_bad = False
-
-                        if not original.get(start_text) or start_text[0] == "S" and start_text != "SG" or start_text == "D205.3":
-                            pygame.draw.rect(window, RED, start_text_box, width=5)
-                            start_bad = True
-
-                        else:
-                            pygame.draw.rect(window, BLACK, start_text_box, width=5)
-
-                        if not original.get(end_text) or end_text[0] == "S" and end_text != "SG" or end_text == "D205.3":
-                            pygame.draw.rect(window, RED, end_text_box, width=5)
-                            end_bad = True
-
-                        else:
-                            pygame.draw.rect(window, BLACK, end_text_box, width=5)
-
-                        if start_bad or end_bad:
-                            window.blit(INVALID, (620 - INVALID.get_width() / 2, 270 - INVALID.get_height() / 2))
-                            pygame.display.update()
-
-                        else:
-                            pygame.draw.rect(window, WHITE, (
-                            620 - INVALID.get_width() / 2, 270 - INVALID.get_height() / 2, INVALID.get_width(),
-                            INVALID.get_height()))
-                            complete = True
+                        submit = True
 
                     else:
                         current = None
@@ -182,32 +159,7 @@ def main():
                         continue
 
                     if event.key == pygame.K_RETURN:
-                        start_bad = False
-                        end_bad = False
-
-                        if not original.get(start_text) or start_text[0] == "S" and start_text != "SG" or start_text == "D205.3":
-                            pygame.draw.rect(window, RED, start_text_box, width=5)
-                            start_bad = True
-
-                        else:
-                            pygame.draw.rect(window, BLACK, start_text_box, width=5)
-
-                        if not original.get(end_text) or end_text[0] == "S" and end_text != "SG" or end_text == "D205.3":
-                            pygame.draw.rect(window, RED, end_text_box, width=5)
-                            end_bad = True
-
-                        else:
-                            pygame.draw.rect(window, BLACK, end_text_box, width=5)
-
-                        if start_bad or end_bad:
-                            window.blit(INVALID, (620 - INVALID.get_width() / 2, 270 - INVALID.get_height() / 2))
-                            pygame.display.update()
-
-                        else:
-                            pygame.draw.rect(window, WHITE, (
-                            620 - INVALID.get_width() / 2, 270 - INVALID.get_height() / 2, INVALID.get_width(),
-                            INVALID.get_height()))
-                            complete = True
+                        submit = True
 
                     elif event.key == pygame.K_BACKSPACE:
                         if current == start_text_box:
@@ -217,8 +169,10 @@ def main():
                             end_text = end_text[:-1]
 
                     else:
-                        start_text_surface_original = TYPING_SIZE_FONT.render(start_text + event.unicode.upper(), True, BLACK)
-                        end_text_surface_original = TYPING_SIZE_FONT.render(end_text + event.unicode.upper(), True, BLACK)
+                        start_text_surface_original = TYPING_SIZE_FONT.render(start_text + event.unicode.upper(), True,
+                                                                              BLACK)
+                        end_text_surface_original = TYPING_SIZE_FONT.render(end_text + event.unicode.upper(), True,
+                                                                            BLACK)
 
                         if current == start_text_box and start_text_surface_original.get_width() < start_text_box.width - 10:
                             start_text += event.unicode.upper()
@@ -227,27 +181,49 @@ def main():
                             end_text += event.unicode.upper()
 
                     pygame.draw.rect(window, WHITE, (
-                    start_text_box.left + 5, start_text_box.top + 5, start_text_box.width - 10,
-                    start_text_box.height - 10))
+                        start_text_box.left + 5, start_text_box.top + 5, start_text_box.width - 10,
+                        start_text_box.height - 10))
                     pygame.draw.rect(window, WHITE, (
-                    end_text_box.left + 5, end_text_box.top + 5, end_text_box.width - 10, end_text_box.height - 10))
+                        end_text_box.left + 5, end_text_box.top + 5, end_text_box.width - 10, end_text_box.height - 10))
 
                     start_text_surface = TYPING_SIZE_FONT.render(start_text, True, BLACK)
                     end_text_surface = TYPING_SIZE_FONT.render(end_text, True, BLACK)
 
                     window.blit(start_text_surface,
-                                (680 - start_text_surface.get_width() / 2, 88 - start_text_surface.get_height() / 2))
+                                (680 - start_text_surface.get_width() / 2, 152 - start_text_surface.get_height() / 2))
                     window.blit(end_text_surface,
-                                (680 - end_text_surface.get_width() / 2, 181 - end_text_surface.get_height() / 2))
+                                (680 - end_text_surface.get_width() / 2, 255 - end_text_surface.get_height() / 2))
                     pygame.display.update()
+
+                if submit:
+                    start_bad = False
+                    end_bad = False
+
+                    for text, text_box in ((start_text, start_text_box), (end_text, end_text_box)):
+                        if not original.get(text) or text[0] == "S" and text != "SG" or text == "D205.3":
+                            pygame.draw.rect(window, RED, text_box, width=5)
+                            start_bad = True
+
+                        else:
+                            pygame.draw.rect(window, BLACK, text_box, width=5)
+
+                    if start_bad or end_bad:
+                        window.blit(invalid_surface,
+                                    (620 - invalid_surface.get_width() / 2, 344 - invalid_surface.get_height() / 2))
+                        pygame.display.update()
+
+                    else:
+                        pygame.draw.rect(window, WHITE, (
+                            620 - invalid_surface.get_width() / 2, 344 - invalid_surface.get_height() / 2,
+                            invalid_surface.get_width(),
+                            invalid_surface.get_height()))
+                        complete = True
 
             if complete:
                 break
 
         window.blit(CREDITS_FONT.render("Calculating...", True, BLACK), (50, 70))
         pygame.display.update()
-
-        start, ends = [], []
 
         if len(end_text) >= 2 and end_text[1] == "B":
             start, ends = rooms[start_text], ([rooms["BB"], rooms["BB2"], rooms["BB3"]] if end_text[0] == "B"
@@ -283,7 +259,7 @@ def main():
 
                     prediction = overall_heuristic(adjacent, ends, octile_heuristic)
                     heappush(priority_queue, (prediction + distance + edge_weight,
-                                                    prediction, distance + edge_weight, adjacent))
+                                              prediction, distance + edge_weight, adjacent))
 
                     visited.add(adjacent)
 
@@ -311,15 +287,15 @@ def main():
 
         pygame.draw.rect(window, RED, submit_button)
         reset = TYPING_SIZE_FONT.render("Reset", True, BLACK)
-        window.blit(reset, (620 - reset.get_width() / 2, 365 - reset.get_height() / 2))
+        window.blit(reset, (620 - reset.get_width() / 2, 439 - reset.get_height() / 2))
 
         pygame.draw.rect(window, WHITE, (50, 70, 100, 50))
 
         text = (f"  Distance: {floor(distance)} ft\n"
-                f"Walking Time: {floor((distance / 4) // 60)}:{('0' if floor((distance / 4) % 60) < 10 else '') + str(floor((distance / 4) % 60))}")
+                f"Walking Time: {floor((distance / 4) // 60)}:{("0" if floor((distance / 4) % 60) < 10 else "") + str(floor((distance / 4) % 60))}")
 
         rendered = TYPING_SIZE_FONT.render(text, True, BLACK)
-        multiline_render(window, text, 620 - rendered.get_width() / 4, 270 - rendered.get_height(), TYPING_SIZE_FONT)
+        multiline_render(window, text, 620 - rendered.get_width() / 4, 344 - rendered.get_height(), TYPING_SIZE_FONT)
 
         pygame.display.update()
 
@@ -340,6 +316,7 @@ def main():
 
             if reset:
                 break
+
 
 if __name__ == "__main__":
     main()
