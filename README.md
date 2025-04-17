@@ -39,7 +39,7 @@ Find the shortest path between any two rooms in Thornton Middle School (Fremont,
 - The part of the path that is upstairs may not seem optimal. However, there is a railing around the classrooms.
 
 ### Credits
-- The Thornton STEM Elective Teacher - Mr. Register, for help throughout the beginning development process, as this was the final project in Programming & App Creators Semester 2 2023-24
+- The Thornton STEM Elective Teacher - Mr. Register, for help throughout the beginning development process, as this was originally final project in Programming & App Creators Semester 2 2023-24
 - The creators & contributors to Google Earth - without them, the map would have been very inaccurate
   - [Link for emails with the domain @fusdk12.net](https://earth.google.com/earth/d/1Qp8S96DS1JuBOxh_XNvjW5HNAKhdmVZ8?usp=sharing)
   - [Link for other emails](https://www.google.com/maps/d/edit?mid=14eqk4JiOht_bZ2ebgf1ISgn5-DIaLRo&usp=sharing)
