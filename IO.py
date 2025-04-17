@@ -1,11 +1,10 @@
-import xml.etree.ElementTree as ET
+from xml.etree import ElementTree
 from math import sin, cos, pi
-from copy import deepcopy
 
 def main():
     prefix = "{http://www.opengis.net/kml/2.2}"
 
-    tree = ET.parse("coordinates.kml")
+    tree = ElementTree.parse("coordinates.kml")
     root = tree.getroot()[0]
 
     coordinates = {}
@@ -30,8 +29,6 @@ def main():
     print(f"Y: {bottom} -> {top}, diff={top - bottom}")
 
     print(f"average diff: {coordinates["12.2"][0] - coordinates["12.1"][0]}")
-
-    old = deepcopy(coordinates)
 
     def make_equal(*args: list[str], longitude=True, latitude=True, goto=False):
         if goto:
@@ -229,3 +226,6 @@ def main():
     y_diffs.sort()
 
     print(f"min x diff: {min((second[0] - first[0], first[1], second[1]) for first, second in zip(x_diffs[:-1], x_diffs[1:]) if second[0] != first[0])}, min y diff: {min((second[0] - first[0], first[1], second[1]) for first, second in zip(y_diffs[:-1], y_diffs[1:]) if second[0] != first[0])}")
+
+if __name__ == "__main__":
+    main()
