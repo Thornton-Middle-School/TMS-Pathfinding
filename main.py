@@ -1,9 +1,10 @@
 import sys
+import asyncio
+
 from heapq import heappush, heappop
 from graph import *
 
-
-def main():
+async def main():
     window = pygame.display.set_mode((LENGTH, HEIGHT))
     window.fill(WHITE)
     pygame.display.set_caption("Thornton Pathfinding")
@@ -12,6 +13,8 @@ def main():
     loading = HUGE_FONT.render("Loading...", True, BLACK)
     window.blit(loading, (400 - loading.get_width() / 2, 300 - loading.get_height() / 2))
     pygame.display.update()
+
+    await asyncio.sleep(0)
 
     rooms, locations = create_graph()
     original = rooms.copy()
@@ -57,6 +60,8 @@ def main():
                             adjacent := locations.get((node.corner_x + x_change, node.corner_y + y_change))):
                         node.adjacent_nodes.append(
                             (adjacent, 1 if abs(x_change) + abs(y_change) == 1 else DIAGONAL_DISTANCE))
+
+    await asyncio.sleep(0)
 
     while True:
         window.fill(WHITE)
@@ -131,6 +136,8 @@ def main():
         invalid_surface = TYPING_SIZE_FONT.render("Invalid Input", True, RED)
 
         complete = False
+
+        await asyncio.sleep(0)
 
         while True:
             for event in pygame.event.get():
@@ -223,8 +230,12 @@ def main():
             if complete:
                 break
 
+            await asyncio.sleep(0)
+
         window.blit(CREDITS_FONT.render("Calculating...", True, BLACK), (50, 70))
         pygame.display.update()
+
+        await asyncio.sleep(0)
 
         if len(end_text) >= 2 and end_text[1] == "B":
             start, ends = rooms[start_text], ([rooms["BB"], rooms["BB2"], rooms["BB3"]] if end_text[0] == "B"
@@ -300,6 +311,8 @@ def main():
 
         pygame.display.update()
 
+        await asyncio.sleep(0)
+
         while True:
             reset = False
 
@@ -319,4 +332,4 @@ def main():
                 break
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
