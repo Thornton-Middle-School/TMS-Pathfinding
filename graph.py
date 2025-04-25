@@ -125,11 +125,14 @@ def euclidean_heuristic(node: Node, end: Node) -> float:
 def overall_heuristic(node: Node, ends: list[Node], heuristic_function):
     return min(heuristic_function(node, end) for end in ends)
 
-def multiline_render(window: pygame.surface, text: str, start_x: float, start_y: float, font: pygame.font.Font, color=BLACK) -> None:
-    x, y = start_x, start_y
+def multiline_render(window: pygame.surface, text: str, x: float, y: float, font: pygame.font.Font, color=BLACK, center=False) -> None:
+    if center:
+        y -= font.get_height() * (text.count("\n") + 1) / 2
 
     for line in text.split("\n"):
-        window.blit(font.render(line, True, color), (x, y))
+        rendered = font.render(line, True, color)
+        window.blit(rendered, (((x - rendered.get_width() / 2) if center else x), y))
+
         y += font.get_height()
 
 def drange(start: int | float, end: int | float, step: int | float = 1):

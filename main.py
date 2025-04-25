@@ -2,10 +2,14 @@ import sys
 import asyncio
 
 from heapq import heappush, heappop
+
+import pygame
+
 from graph import *
 
+
 async def main():
-    window = pygame.display.set_mode((LENGTH, HEIGHT))
+    window = pygame.display.set_mode((LENGTH, HEIGHT), pygame.RESIZABLE)
     window.fill(WHITE)
     pygame.display.set_caption("Thornton Pathfinding")
     pygame.display.set_icon(pygame.image.load("logo.png"))
@@ -303,11 +307,10 @@ async def main():
 
         pygame.draw.rect(window, WHITE, (50, 70, 100, 50))
 
-        text = (f"  Distance: {floor(distance)} ft\n"
-                f"Walking Time: {floor((distance / 4) // 60)}:{("0" if floor((distance / 4) % 60) < 10 else "") + str(floor((distance / 4) % 60))}")
+        results_text = (f"Distance: {floor(distance)} ft\n"
+                        f"Walking Time: {floor((distance / 4) // 60)}:{("0" if floor((distance / 4) % 60) < 10 else "") + str(floor((distance / 4) % 60))}")
 
-        rendered = TYPING_SIZE_FONT.render(text, True, BLACK)
-        multiline_render(window, text, 620 - rendered.get_width() / 4, 344 - rendered.get_height(), TYPING_SIZE_FONT)
+        multiline_render(window, results_text, 615, 347, TYPING_SIZE_FONT, center=True)
 
         pygame.display.update()
 
@@ -330,6 +333,7 @@ async def main():
 
             if reset:
                 break
+
 
 if __name__ == "__main__":
     asyncio.run(main())
