@@ -1,7 +1,7 @@
 from math import sqrt
 import pygame
 
-LENGTH, HEIGHT = 800, 600
+LENGTH, HEIGHT = 1600, 960
 
 DIAGONAL_DISTANCE = sqrt(2)
 STAIRS_DISTANCE = 39.6
@@ -17,12 +17,12 @@ RED = (230, 0, 0)
 ORANGE = (255, 165, 0)
 
 pygame.font.init()
-MICRO_FONT = pygame.font.SysFont("timesnewroman", 7)
-TINY_FONT = pygame.font.SysFont("timesnewroman", 8)
-MINI_FONT = pygame.font.SysFont("timesnewroman", 9)
-MEDIUM_FONT = pygame.font.SysFont("timesnewroman", 13)
-BIG_FONT = pygame.font.SysFont("timesnewroman", 25)
-HUGE_FONT = pygame.font.SysFont("timesnewroman", 40)
-CREDITS_FONT = pygame.font.SysFont("timesnewroman", 17)
-TYPING_SIZE_FONT = pygame.font.SysFont("timesnewroman", 35)
-KEY_FONT = pygame.font.SysFont("timesnewroman", 15)
+MICRO_FONT = pygame.font.Font("timesnewroman.ttf", 10)
+TINY_FONT = pygame.font.Font("timesnewroman.ttf", 12)
+MINI_FONT = pygame.font.Font("timesnewroman.ttf", 14)
+MEDIUM_FONT = pygame.font.Font("timesnewroman.ttf", 16)
+BIG_FONT = pygame.font.Font("timesnewroman.ttf", 30)
+HUGE_FONT = pygame.font.Font("timesnewroman.ttf", 45)
+CREDITS_FONT = pygame.font.Font("timesnewroman.ttf", 22)
+TYPING_SIZE_FONT = pygame.font.Font("timesnewroman.ttf", 40)
+KEY_FONT = pygame.font.Font("timesnewroman.ttf", 30)

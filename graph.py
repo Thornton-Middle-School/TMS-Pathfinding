@@ -32,11 +32,10 @@ class Node:
         return self.__dict__ == other.__dict__
 
 def upstairs(node: Node | str):
-    if isinstance(node, Node):
-        return node.corner_y < 224
+    name = node.type_ if isinstance(node, Node) else node
 
-    if len(node) > 2:
-        if node[1] == "2" or node[2] == "3" or node[0] == "S" and node[3] == "2":
+    if len(name) > 2:
+        if name[1] == "2" or name[2] == "3" or name[0] == "S" and name[3] == "2":
             return True
 
     return False
@@ -57,7 +56,7 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
         original = name
         name = name[:-2] if (name[0] != "S" or name[:2] == "SG") and name != "D205.3" else name  # D205.3 is a dummy value for C201 & D205 adjacency
 
-        y_subtraction = 300 if upstairs(name) else 30
+        y_subtraction = 425 if upstairs(name) else 30
 
         if name in rooms:
             rooms[name].min_x = min(rooms[name].min_x, longitude)
@@ -68,7 +67,7 @@ def create_graph() -> tuple[dict[str, Node], dict[tuple[int, int], Node]]:
         else:
             rooms[name] = Node(min_x=longitude, max_x=longitude, min_y=HEIGHT - latitude - y_subtraction, max_y=HEIGHT - latitude - y_subtraction, type_=name)
 
-        if original[-1] == "1" or original[0] == "S" and original[:-2] != "SG" or name == "D205.3":
+        if original[-1] in ("1", "3") or original[0] == "S" and original[:-2] != "SG":
             rooms[name].corner_x = longitude
             rooms[name].corner_y = HEIGHT - latitude - y_subtraction
 
@@ -125,15 +124,18 @@ def euclidean_heuristic(node: Node, end: Node) -> float:
 def overall_heuristic(node: Node, ends: list[Node], heuristic_function):
     return min(heuristic_function(node, end) for end in ends)
 
-def multiline_render(window: pygame.surface, text: str, x: float, y: float, font: pygame.font.Font, color=BLACK, center=False) -> None:
+def multiline_render(window: pygame.surface, text: str, x: float, y: float, font: pygame.font.Font, color=BLACK, center=False, spacing=1.0) -> None:
+    line_count = text.count("\n") + 1
+    y -= (line_count - 1) * (spacing - 1) * font.get_height()
+
     if center:
-        y -= font.get_height() * (text.count("\n") + 1) / 2
+        y -= font.get_height() * line_count / 2
 
     for line in text.split("\n"):
         rendered = font.render(line, True, color)
         window.blit(rendered, (((x - rendered.get_width() / 2) if center else x), y))
 
-        y += font.get_height()
+        y += font.get_height() * spacing
 
 def drange(start: int | float, end: int | float, step: int | float = 1):
     value = start
