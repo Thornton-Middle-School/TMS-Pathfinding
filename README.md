@@ -2,8 +2,8 @@
 Find the shortest path between any two rooms in Thornton Middle School (Fremont, CA, USA). The school map was created by using Google Earth, and the path is found using the A* Pathfinding Algorithm.
 
 ## Dependencies
-- Python 3.12
-- Pygame 2.5.2
+- Python 3.12+
+- Pygame 2.5.2+
 
 ## Instructions
 #### Downloading the app
