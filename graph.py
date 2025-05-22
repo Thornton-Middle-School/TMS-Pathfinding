@@ -126,7 +126,6 @@ def overall_heuristic(node: Node, ends: list[Node], heuristic_function):
 
 def multiline_render(window: pygame.surface, text: str, x: float, y: float, font: pygame.font.Font, color=BLACK, center=False, spacing=1.0) -> None:
     line_count = text.count("\n") + 1
-    y -= (line_count - 1) * (spacing - 1) * font.get_height()
 
     if center:
         y -= font.get_height() * line_count / 2

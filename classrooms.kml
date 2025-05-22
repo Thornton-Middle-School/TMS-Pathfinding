@@ -331,7 +331,7 @@
 		<ns0:name>16.2</ns0:name>
 		<ns0:LookAt>
 			<ns0:longitude>617.032658037715</ns0:longitude>
-			<ns0:latitude>62.793057101373506</ns0:latitude>
+			<ns0:latitude>69.05871235460381</ns0:latitude>
 			<ns0:altitude>18.22740759916856</ns0:altitude>
 			<ns0:heading>34.07237282201422</ns0:heading>
 			<ns0:tilt>0</ns0:tilt>
@@ -341,14 +341,14 @@
 		</ns0:LookAt>
 		<ns0:styleUrl>#__managed_style_06C2C74C3130617FD97B</ns0:styleUrl>
 		<ns0:Point>
-			<ns0:coordinates>617.032658037715,62.793057101373506,18.20606953077397</ns0:coordinates>
+			<ns0:coordinates>617.032658037715,69.05871235460381,18.20606953077397</ns0:coordinates>
 		</ns0:Point>
 	</ns0:Placemark>
 	<ns0:Placemark id="073E65A20E3033B6F5F4">
 		<ns0:name>16A.1</ns0:name>
 		<ns0:LookAt>
 			<ns0:longitude>575.5548731516313</ns0:longitude>
-			<ns0:latitude>62.793057101373506</ns0:latitude>
+			<ns0:latitude>69.05871235460381</ns0:latitude>
 			<ns0:altitude>18.22740759916856</ns0:altitude>
 			<ns0:heading>34.07237282201418</ns0:heading>
 			<ns0:tilt>0</ns0:tilt>
@@ -358,7 +358,7 @@
 		</ns0:LookAt>
 		<ns0:styleUrl>#__managed_style_06C2C74C3130617FD97B</ns0:styleUrl>
 		<ns0:Point>
-			<ns0:coordinates>575.5548731516313,62.793057101373506,18.20908343726638</ns0:coordinates>
+			<ns0:coordinates>575.5548731516313,69.05871235460381,18.20908343726638</ns0:coordinates>
 		</ns0:Point>
 	</ns0:Placemark>
 	<ns0:Placemark id="062F7A6E413033B73C6B">
@@ -569,7 +569,7 @@
 		<ns0:name>25.1</ns0:name>
 		<ns0:LookAt>
 			<ns0:longitude>769.5229399149639</ns0:longitude>
-			<ns0:latitude>30.53396995142066</ns0:latitude>
+			<ns0:latitude>46.23145208896062</ns0:latitude>
 			<ns0:altitude>14.69862301537616</ns0:altitude>
 			<ns0:heading>34.07256470142016</ns0:heading>
 			<ns0:tilt>0</ns0:tilt>
@@ -579,7 +579,7 @@
 		</ns0:LookAt>
 		<ns0:styleUrl>#__managed_style_06C2C74C3130617FD97B</ns0:styleUrl>
 		<ns0:Point>
-			<ns0:coordinates>769.5229399149639,30.53396995142066,14.84819704509673</ns0:coordinates>
+			<ns0:coordinates>769.5229399149639,46.23145208896062,14.84819704509673</ns0:coordinates>
 		</ns0:Point>
 	</ns0:Placemark>
 	<ns0:Placemark id="0A77C881933033C3672D">

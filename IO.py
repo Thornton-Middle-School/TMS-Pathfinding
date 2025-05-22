@@ -232,6 +232,10 @@ def main():
 
     coordinates["A101.1"][1] = coordinates["A201.1"][1] = coordinates["C101.1"][1] = coordinates["C201.1"][1] = coordinates["E101.1"][1] = coordinates["E201.1"][1] = coordinates["A106.2"][1] = coordinates["A205.2"][1] = coordinates["C107.2"][1] = coordinates["C205.2"][1] = coordinates["E107.2"][1] = coordinates["E205.2"][1] = (coordinates["E101.2"][1] + coordinates["E107.1"][1]) / 2
 
+    coordinates["16A.1"][1] = coordinates["16.2"][1] = (coordinates["16A.2"][1] + coordinates["16.1"][1]) / 2
+
+    make_equal("25.1", "24.2", longitude=False, goto=True)
+
     left, right = 500, -500
     top, bottom = 500, -500
 
