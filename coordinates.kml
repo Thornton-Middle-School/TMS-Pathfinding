@@ -1842,7 +1842,7 @@
 		</Point>
 	</Placemark>
 	<Placemark id="0AE0EF153E30393C62BD">
-		<name>1A.1</name>
+		<name>GB4.1</name>
 		<LookAt>
 			<longitude>-122.0161784296365</longitude>
 			<latitude>37.55630361697651</latitude>
@@ -1853,13 +1853,13 @@
 			<range>111.204545651417</range>
 			<altitudeMode>absolute</altitudeMode>
 		</LookAt>
-		<styleUrl>#__managed_style_06C2C74C3130617FD97B</styleUrl>
+		<styleUrl>#__managed_style_0E3D960574380145C5CB</styleUrl>
 		<Point>
-			<coordinates>-122.0161503638683,37.55615600928648,14.65438886867206</coordinates>
+			<coordinates>-122.0161953475165,37.55617722087508,14.65438886867206</coordinates>
 		</Point>
 	</Placemark>
 	<Placemark id="000FE50EB030393CBA0D">
-		<name>1A.2</name>
+		<name>GB4.2</name>
 		<LookAt>
 			<longitude>-122.0162344114881</longitude>
 			<latitude>37.55627536345744</latitude>
@@ -1870,9 +1870,43 @@
 			<range>96.56495968940364</range>
 			<altitudeMode>absolute</altitudeMode>
 		</LookAt>
-		<styleUrl>#__managed_style_06C2C74C3130617FD97B</styleUrl>
+		<styleUrl>#__managed_style_0E3D960574380145C5CB</styleUrl>
 		<Point>
 			<coordinates>-122.0161897681479,37.55630737475096,18.55809231864653</coordinates>
+		</Point>
+	</Placemark>
+		<Placemark id="0D2DEC4471380154AEB9">
+		<name>BB4.1</name>
+		<LookAt>
+			<longitude>-122.0162134729147</longitude>
+			<latitude>37.55642574578658</latitude>
+			<altitude>17.92858898618898</altitude>
+			<heading>302.999915020685</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30</gx:fovy>
+			<range>253.5003574776056</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_0E3D960574380145C5CB</styleUrl>
+		<Point>
+			<coordinates>-122.0161570289183,37.5561596665581,17.73742661868603</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0F73DFDCEB380154E568">
+		<name>BB4.2</name>
+		<LookAt>
+			<longitude>-122.0162134729147</longitude>
+			<latitude>37.55642574578658</latitude>
+			<altitude>17.92858898618898</altitude>
+			<heading>302.999915020685</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30</gx:fovy>
+			<range>253.5003574776056</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_0E3D960574380145C5CB</styleUrl>
+		<Point>
+			<coordinates>-122.0161180698349,37.55626419720538,18.01821053280167</coordinates>
 		</Point>
 	</Placemark>
 	<Placemark id="068F5533EA30393CF59F">
@@ -1958,6 +1992,23 @@
 		<styleUrl>#__managed_style_06C2C74C3130617FD97B</styleUrl>
 		<Point>
 			<coordinates>-122.01703068737528,37.5560959620439,14.46955077168403</coordinates>
+		</Point>
+	</Placemark>
+		<Placemark id="0C452C03FD3801556C10">
+		<name>LG.3</name>
+		<LookAt>
+			<longitude>-122.0165940444404</longitude>
+			<latitude>37.55673129287832</latitude>
+			<altitude>18.28482616037195</altitude>
+			<heading>302.9995832413466</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30</gx:fovy>
+			<range>439.9359603661287</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_0E3D960574380145C5CB</styleUrl>
+		<Point>
+			<coordinates>-122.0169754682898,37.55644915874101,21.79554870863477</coordinates>
 		</Point>
 	</Placemark>
 	<Placemark id="0062D65DC930394011E7">

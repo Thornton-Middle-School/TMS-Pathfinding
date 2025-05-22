@@ -1,19 +1,25 @@
 import sys
+import asyncio
+
 from heapq import heappush, heappop
 from graph import *
 
-
-def main():
+async def main():
     window = pygame.display.set_mode((LENGTH, HEIGHT))
     window.fill(WHITE)
+
     pygame.display.set_caption("Thornton Pathfinding")
     pygame.display.set_icon(pygame.image.load("logo.png"))
 
     loading = HUGE_FONT.render("Loading...", True, BLACK)
-    window.blit(loading, (400 - loading.get_width() / 2, 300 - loading.get_height() / 2))
+    window.blit(loading, (LENGTH / 2 - loading.get_width() / 2, HEIGHT / 2 - loading.get_height() / 2))
     pygame.display.update()
 
+    await asyncio.sleep(0)
+
     rooms, locations = create_graph()
+    print(locations)
+
     original = rooms.copy()
 
     min_x, min_y, max_x, max_y = 1000, 1000, -1000, -1000
@@ -59,6 +65,8 @@ def main():
                             (adjacent, 1 if abs(x_change) + abs(y_change) == 1 else DIAGONAL_DISTANCE))
 
     while True:
+        await asyncio.sleep(0)
+
         window.fill(WHITE)
 
         for node in original.values():
@@ -68,7 +76,7 @@ def main():
             pygame.draw.rect(window, BLACK, (node.min_x, node.min_y, node.max_x - node.min_x, node.max_y - node.min_y),
                              1)
 
-            if node.type_ in ["GB", "BB", "GB2", "GB3", "BB2", "BB3", "21B", "D110", "D210"]:
+            if node.type_ in ["GB", "BB", "GB2", "GB3", "BB2", "BB3", "GB4", "BB4", "21B", "D110", "D210"]:
                 font = MICRO_FONT
 
             elif node.type_ in ["16A", "20", "29", "28A", "37", "47", "A101", "A201", "A106", "A205", "B101", "B201",
@@ -85,42 +93,59 @@ def main():
             else:
                 font = MEDIUM_FONT
 
-            if len(node.type_) == 3 and node.type_[1] == "B":
-                top = font.render(str(node.type_[:-1]), True, BLUE)
-                multiline_render(window, f"{node.type_[:-1]}\n  {node.type_[-1]}",
-                                 (node.min_x + node.max_x) / 2 - top.get_width() / 2,
-                                 (node.min_y + node.max_y) / 2 - top.get_height() / 2, font=font, color=BLUE)
+            name = "S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_ if node.type_ not in (
+            "GB", "BB") else node.type_[0] + "1"
+
+            if len(name) > 2 and name[:2] in ("BB", "GB") and name[-1] in ("2", "3"):
+                name = f"{name[:-1]}\n{node.type_[-1]}"
+                multiline_render(window, name, (node.min_x + node.max_x) / 2, (node.min_y + node.max_y) / 2, font,
+                                 color=BLUE, center=True)
 
             else:
-                text = font.render("S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_, True, BLUE)
+                text = font.render(name, True, BLUE)
                 window.blit(text, ((node.min_x + node.max_x) / 2 - text.get_width() / 2,
                                    (node.min_y + node.max_y) / 2 - text.get_height() / 2))
 
-        window.blit(HUGE_FONT.render("Upstairs", True, BLACK), (205, 20))
-        window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (100, 265))
+        multiline_render(window, "Upstairs", 495, 50, HUGE_FONT, color=BLACK, center=True)
+        window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (188, 374))
 
-        window.blit(TYPING_SIZE_FONT.render("Start: ", True, BLACK), (490, 140))
-        window.blit(TYPING_SIZE_FONT.render("  End: ", True, BLACK), (490, 236))
-
-        start_text_box = pygame.Rect(620, 127, 120, 50)
-        end_text_box = pygame.Rect(620, 230, 120, 50)
-        submit_button = pygame.Rect(560, 414, 120, 50)
+        start_text_box = pygame.Rect(1210, 127, 120, 50)
+        end_text_box = pygame.Rect(1210, 230, 120, 50)
+        submit_button = pygame.Rect(1150, 414, 120, 50)
 
         pygame.draw.rect(window, BLACK, start_text_box, width=5)
         pygame.draw.rect(window, BLACK, end_text_box, width=5)
         pygame.draw.rect(window, GREEN, submit_button)
 
+        window.blit(TYPING_SIZE_FONT.render("Start: ", True, BLACK), (1080, 140))
+        window.blit(TYPING_SIZE_FONT.render("  End: ", True, BLACK), (1080, 236))
+
         submit = TYPING_SIZE_FONT.render("Submit", True, BLACK)
-        window.blit(submit, (620 - submit.get_width() / 2, 439 - submit.get_height() / 2))
+        window.blit(submit, (1210 - submit.get_width() / 2, 439 - submit.get_height() / 2))
 
         key_text = ("Key:\n"
-                    "BB/GB (very small font): Boys/Girls Bathroom\n"
+                    "B/BB or G/GB + (identifier) (very small font): Boys/Girls Bathroom\n"
                     "LG/SG: Large/Small Gym\n"
                     "BLR/GLR: Boys/Girls Locker Room\n"
                     "S: Stairs")
 
         width = max(KEY_FONT.render(line, True, BLACK).get_width() for line in key_text.split("\n"))
-        multiline_render(window, key_text, 620 - width / 2, HEIGHT - 30 - KEY_FONT.get_height() * 5, KEY_FONT)
+        multiline_render(window, key_text, (2411 - width) / 2, HEIGHT - 30 - KEY_FONT.get_height() * 7, KEY_FONT,
+                         spacing=1.5)
+
+        instructions = ("Instructions:\n"
+                        "1. Click on the start and end boxes to enter the room numbers.\n"
+                        "    Note: for bathrooms, type up the name as shown with or without the second letter (B).\n"
+                        "    If you just want to go to a bathroom, type B/BB or G/GB. This only applies for the\n"
+                        "    destination room.\n"
+                        "2. When complete, press submit or press enter/return on your keyboard.\n"
+                        "3. After a few seconds, a path should show up. Green is the start, ed is the end, orange\n"
+                        "    is the path itself. \n"
+                        "4. If you want to reset, click the reset button.\n")
+
+        width = max(INSTRUCTION_FONT.render(line, True, BLACK).get_width() for line in instructions.split("\n"))
+        print(width)
+        multiline_render(window, instructions, (2411 - width) / 2, HEIGHT - 50 - KEY_FONT.get_height() * 7 - INSTRUCTION_FONT.get_height() * 9, INSTRUCTION_FONT)
 
         pygame.display.update()
 
@@ -191,17 +216,42 @@ def main():
                     end_text_surface = TYPING_SIZE_FONT.render(end_text, True, BLACK)
 
                     window.blit(start_text_surface,
-                                (680 - start_text_surface.get_width() / 2, 152 - start_text_surface.get_height() / 2))
+                                (1270 - start_text_surface.get_width() / 2, 152 - start_text_surface.get_height() / 2))
                     window.blit(end_text_surface,
-                                (680 - end_text_surface.get_width() / 2, 255 - end_text_surface.get_height() / 2))
+                                (1270 - end_text_surface.get_width() / 2, 255 - end_text_surface.get_height() / 2))
                     pygame.display.update()
 
                 if submit:
-                    start_bad = False
+                    start_text = start_text.upper()
+                    end_text = end_text.upper()
+
+                    if start_text == "OFFICE":
+                        start_text = "Office"
+
+                    if end_text == "OFFICE":
+                        end_text = "Office"
+
+                    print(start_text, end_text)
+
+                    if start_text in ("G", "B") or start_text[0] in ("G", "B") and start_text[1] in ("2", "3", "4"):
+                        start_text = start_text[0] + "B" + start_text[1:]
+
+                    if end_text in ("G", "B") or end_text[0] in ("G", "B") and end_text[1] in ("2", "3", "4"):
+                        end_text = end_text[0] + "B" + end_text[1:]
+
+                    if start_text in ("GB1", "BB1"):
+                        start_text = start_text[0] + "1"
+
+                    if end_text in ("GB1", "BB1"):
+                        end_text = end_text[0] + "1"
+
+                    print(start_text, end_text)
+
+                    start_bad = (start_text == "GB")
                     end_bad = False
 
                     for text, text_box in ((start_text, start_text_box), (end_text, end_text_box)):
-                        if not original.get(text) or text[0] == "S" and text != "SG" or text == "D205.3":
+                        if not original.get(text) and text not in ("G1", "B1") or text[0] == "S" and text != "SG" or text == "D205.3":
                             pygame.draw.rect(window, RED, text_box, width=5)
                             start_bad = True
 
@@ -210,12 +260,12 @@ def main():
 
                     if start_bad or end_bad:
                         window.blit(invalid_surface,
-                                    (620 - invalid_surface.get_width() / 2, 344 - invalid_surface.get_height() / 2))
+                                    (1210 - invalid_surface.get_width() / 2, 344 - invalid_surface.get_height() / 2))
                         pygame.display.update()
 
                     else:
                         pygame.draw.rect(window, WHITE, (
-                            620 - invalid_surface.get_width() / 2, 344 - invalid_surface.get_height() / 2,
+                            1210 - invalid_surface.get_width() / 2, 344 - invalid_surface.get_height() / 2,
                             invalid_surface.get_width(),
                             invalid_surface.get_height()))
                         complete = True
@@ -223,14 +273,24 @@ def main():
             if complete:
                 break
 
-        window.blit(CREDITS_FONT.render("Calculating...", True, BLACK), (50, 70))
+            await asyncio.sleep(0)
+
+        window.blit(SLIGHTLY_BIG_FONT.render("Calculating...", True, BLACK), (50, 70))
         pygame.display.update()
 
-        if len(end_text) >= 2 and end_text[1] == "B":
-            start, ends = rooms[start_text], ([rooms["BB"], rooms["BB2"], rooms["BB3"]] if end_text[0] == "B"
-                                              else [rooms["GB"], rooms["GB2"], rooms["GB3"]])
+        await asyncio.sleep(0)
+
+        if start_text in ("B1", "G1"):
+            start_text = start_text[0] + "B"
+
+        if end_text in ("BB", "GB"):
+            start, ends = rooms[start_text], ([rooms["BB"], rooms["BB2"], rooms["BB3"], rooms["BB4"]] if end_text[0] == "B"
+                                              else [rooms["GB"], rooms["GB2"], rooms["GB3"], rooms["GB4"]])
 
         else:
+            if end_text in ("G1", "B1"):
+                end_text = end_text[0] + "B"
+
             start, ends = rooms[start_text], [rooms[end_text]]
 
         priority_queue: tuple[float, Node, float, float] = []
@@ -277,6 +337,8 @@ def main():
             node.from_ = None
             node = _next[0]
 
+        print(distance)
+
         start.distance = float("inf")
         distance *= SCALE
 
@@ -288,17 +350,18 @@ def main():
 
         pygame.draw.rect(window, RED, submit_button)
         reset = TYPING_SIZE_FONT.render("Reset", True, BLACK)
-        window.blit(reset, (620 - reset.get_width() / 2, 439 - reset.get_height() / 2))
+        window.blit(reset, (1210 - reset.get_width() / 2, 439 - reset.get_height() / 2))
 
-        pygame.draw.rect(window, WHITE, (50, 70, 100, 50))
+        pygame.draw.rect(window, WHITE, (50, 70, 150, 70))
 
-        text = (f"  Distance: {floor(distance)} ft\n"
-                f"Walking Time: {floor((distance / 4) // 60)}:{("0" if floor((distance / 4) % 60) < 10 else "") + str(floor((distance / 4) % 60))}")
+        results_text = (f"Distance: {floor(distance)} ft\n"
+                        f"Walking Time: {floor((distance / 308 * 75) // 60)}:{("0" if floor((distance / 308 * 75) % 60) < 10 else "") + str(floor((distance / 308 * 75) % 60))}")
 
-        rendered = TYPING_SIZE_FONT.render(text, True, BLACK)
-        multiline_render(window, text, 620 - rendered.get_width() / 4, 344 - rendered.get_height(), TYPING_SIZE_FONT)
+        multiline_render(window, results_text, 1205, 347, TYPING_SIZE_FONT, center=True)
 
         pygame.display.update()
+
+        await asyncio.sleep(0)
 
         while True:
             reset = False
@@ -318,5 +381,6 @@ def main():
             if reset:
                 break
 
+
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

@@ -93,7 +93,7 @@ def main():
     make_equal("E101.2", "E201.2")
     make_equal("E107.1", "E205.1")
     make_equal("E107.2", "E205.2")
-    make_equal("1A.2", "1.2", "2.2", "3.2")
+    make_equal("GB4.2", "1.2", "2.2", "3.2")
     make_equal("4.2", "5.2", "10.2", "11.2")
     make_equal("6.2", "7.2", "8.2", "9.2")
     make_equal("12.2", "13.2", "14.2", "15.2")
@@ -102,9 +102,9 @@ def main():
     make_equal("18.2", "21.2")
     make_equal("19.2", "22.2")
     make_equal("BLR.1", "GLR.1", longitude=False)
-    make_equal("3.2", "1A.2", "1.2", "2.2", "7.2", "6.2", "8.2", "9.2", "12.2", "13.2", "14.2", "15.2", "40.2", "41.2", longitude=False)
-    make_equal("16.1", "20.2", "21B.2", "17.2", "21.2", "18.2", "22.2", "19.2", "23.2", longitude=False)
-    make_equal("1A.1", "4.1", "1.1", "6.1", "5.1", "9.1", "12.1", "15.1", "40.1", longitude=False)
+    make_equal("3.2", "GB4.2", "1.2", "2.2", "7.2", "6.2", "8.2", "9.2", "12.2", "13.2", "14.2", "15.2", "40.2", "41.2", longitude=False)
+    make_equal("4.2", "5.2", "10.2", "11.2", "16.1", "20.2", "21B.2", "17.2", "21.2", "18.2", "22.2", "19.2", "23.2", "24.2", longitude=False)
+    make_equal("BB4.1", "4.1", "1.1", "6.1", "5.1", "9.1", "12.1", "15.1", "40.1", longitude=False)
     make_equal("2.1", "3.1", "7.1", "8.1", "13.1", "14.1", "41.1", longitude=False)
     make_equal("10.1", "11.1", "20.1", "21B.1", "21.1", "22.1", "23.1", "24.1", longitude=False)
     make_equal("16A.1", "16.2", longitude=False)
@@ -112,7 +112,7 @@ def main():
     make_equal("B101.2", "B201.2", "B106.2", "B205.2", "GB2.2", "GB3.2", "BB2.2", "BB3.2", "D105.2", "D205.2", "D106.2", "D206.2", "D110.2", "D210.2", "D112.2", "D212.2", longitude=False)
     make_equal("11.1", "6.1", "5.1", "7.1", "A101.2", "A201.2", "A106.2", "A205.2", "B101.2", "B201.2", latitude=False)
     make_equal("10.1", "1.1", "4.1", "3.1", latitude=False)
-    make_equal("1A.1", "2.1", latitude=False)
+    make_equal("BB4.1", "GB4.1", "2.1", latitude=False)
     make_equal("9.1", "8.1", "B106.1", "B205.1", "GB2.2", "GB3.2", latitude=False)
     make_equal("GB2.1", "GB3.1", "BB2.2", "BB3.2", latitude=False)
     make_equal("6.2", "7.2", "8.2", "9.2", "A101.1", "A106.1", "A201.1", "A205.1", "B101.1", "B201.1", "B106.2", "B205.2", "Office.1", latitude=False)
@@ -123,7 +123,6 @@ def main():
     make_equal("D112.1", "D212.1", latitude=False)
     make_equal("20.2", "21B.1", latitude=False)
     make_equal("17.2", "21B.2", "21.1", "16.2", "16A.2", "E101.1", "E201.1", "E107.1", "E205.1", latitude=False)
-    make_equal("22.1", "18.2", "21.2", "17.1", "40.2", "41.1", "E101.2", "E201.2", "E107.2", "E205.2", latitude=False)
     make_equal("23.1", "19.2", "22.2", "18.1", latitude=False)
     make_equal("23.2", "19.1", "40.1", "41.2", latitude=False)
 
@@ -139,8 +138,9 @@ def main():
     make_equal(*[f"{number}.2" for number in range(24, 37)], "28A.2", "BB.2", latitude=False, goto=True)
     make_equal(*[f"{number}.1" for number in range(37, 48)], latitude=False)
     make_equal(*[f"{number}.2" for number in range(37, 48)], latitude=False)
-    make_equal("4.2", "5.2", "10.2", "11.2", "20.2", longitude=False, goto=True)
-    make_equal("4.2", "5.2", "10.2", "11.2", "GLR.1", latitude=False, goto=True)
+
+    coordinates["4.2"][0] = (coordinates["4.1"][0] + coordinates["5.1"][0]) / 2
+    make_equal("5.2", "10.2", "11.2", "GLR.1", "4.2", latitude=False, goto=True)
 
     for classroom in range(24, 47):
         if classroom < 37:
@@ -155,8 +155,38 @@ def main():
                 make_equal("39.1", "42.2", longitude=False)
 
     make_equal("17.1", "18.1", "19.1", "16A.2", "4.1", "5.1", "26.2", longitude=False, goto=True)
-    make_equal("4.2", "5.2", "10.2", "11.2", "25.2", longitude=False, goto=True)
+    make_equal("25.2", "26.2", longitude=False, goto=True)
+    make_equal("26.1", "25.2", longitude=False, goto=True)
+    make_equal("26.2", "27.2", longitude=False, goto=True)
+    make_equal("27.1", "26.2", longitude=False, goto=True)
+    make_equal("27.2", "28.2", longitude=False, goto=True)
+    make_equal("28.1", "27.2", longitude=False, goto=True)
+    make_equal("28.2", "41.1", longitude=False, goto=True)
+    make_equal("28A.1", "28.2", longitude=False, goto=True)
+
+    coordinates["28A.2"][1] = (coordinates["BB.1"][1] + coordinates["BB.2"][1]) / 2
+
+    make_equal("BB.1", "GB.1", "BB.2", longitude=False, goto=True)
+    make_equal("BB.2", "GB.2", "29.1", longitude=False, goto=True)
+
+    make_equal("29.1", "29.2", longitude=False, goto=True)
+    make_equal("29.2", "30.1", longitude=False, goto=True)
+
+    difference = coordinates["30.2"][1] - coordinates["30.1"][1]
+    coordinates["29.2"][1] += difference/4
+    coordinates["30.1"][1] += difference/3
+
+    make_equal("4.2", "5.2", "10.2", "11.2", "24.2", "21.2", longitude=False, goto=True)
     make_equal("16A.1", "16.2", longitude=False)
+
+    shift = (coordinates["4.1"][0] - coordinates["1.1"][0]) / 4
+    coordinates["4.1"][0] -= shift
+    coordinates["10.1"][0] -= shift
+    coordinates["5.1"][0] += shift
+    coordinates["11.1"][0] += shift
+
+    make_equal("22.1", "18.2", "21.2", "17.1", "40.2", "41.2", "37.2", latitude=False, goto=True)
+
     coordinates["21B.1"][0] = (coordinates["20.1"][0] + coordinates["21.1"][0]) / 2
     coordinates["20.2"][0] = (coordinates["20.1"][0] + coordinates["21.1"][0]) / 2
 
@@ -166,11 +196,45 @@ def main():
     make_equal("C205.2", "C201.1", longitude=False)
     make_equal("E107.2", "E101.1", longitude=False)
     make_equal("E205.2", "E201.1", longitude=False)
-    make_equal("A101.2", "A201.2", "E107.1", "E205.1", "C107.1", longitude=False, goto=True)
-    make_equal("C101.2", "C201.2", "E101.2", "E201.2", "A106.1", longitude=False, goto=True)
+    make_equal("A101.2", "A201.2", "E107.1", "E205.1", "C107.1", longitude=False)
+    make_equal("C101.2", "C201.2", "E101.2", "E201.2", "A106.1", longitude=False)
 
-    make_equal("Band.2", "SG.1", "1A.2", longitude=False, goto=True)
+    make_equal("D112.1", "D212.1", "E101.2", "E107.2", "E201.2", "E205.2", latitude=False, goto=True)
+
+    make_equal("Band.2", "SG.1", "GB4.2", longitude=False, goto=True)
     make_equal("SG.2", "24.1", longitude=False, goto=True)
+
+    coordinates["GB.1"][0] = coordinates["GB.2"][0] - (coordinates["BB.2"][0] - coordinates["BB.1"][0])
+    coordinates["BB2.1"][0] = coordinates["BB3.1"][0] = coordinates["BB2.2"][0] + (coordinates["GB2.1"][0] - coordinates["GB2.2"][0])
+
+    make_equal("BB4.2", "GB4.2", latitude=False, goto=True)
+
+    coordinates["GB4.1"][1] = coordinates["BB4.2"][1] = (coordinates["GB4.2"][1] + coordinates["BB4.1"][1]) / 2
+
+    make_equal("LG.3", "LG.1", latitude=False, goto=True)
+
+    make_equal("SA.1", "SA.2", latitude=False, goto=True)
+    make_equal("SB.1", "SB.2", latitude=False, goto=True)
+    make_equal("SC.1", "SC.2", latitude=False, goto=True)
+    make_equal("SD.1", "SD.2", longitude=False, goto=True)
+    make_equal("SE.2", "SE.1", latitude=False, goto=True)
+
+    coordinates["SC.1"][1] = coordinates["SA.1"][1]
+
+    coordinates["SC.2"][1] = coordinates["SA.2"][1]
+
+    coordinates["SE.2"][1] = coordinates["SA.1"][1]
+
+    coordinates["SA.2"][1] = coordinates["SC.2"][1] = coordinates["SE.1"][1]
+
+    avg_y = (coordinates["SD.1"][1] + coordinates["SD.2"][1] + coordinates["SB.2"][1]) / 3
+    coordinates["SD.1"][1] = coordinates["SD.2"][1] = coordinates["SB.2"][1] = avg_y
+
+    coordinates["A101.1"][1] = coordinates["A201.1"][1] = coordinates["C101.1"][1] = coordinates["C201.1"][1] = coordinates["E101.1"][1] = coordinates["E201.1"][1] = coordinates["A106.2"][1] = coordinates["A205.2"][1] = coordinates["C107.2"][1] = coordinates["C205.2"][1] = coordinates["E107.2"][1] = coordinates["E205.2"][1] = (coordinates["E101.2"][1] + coordinates["E107.1"][1]) / 2
+
+    coordinates["16A.1"][1] = coordinates["16.2"][1] = (coordinates["16A.2"][1] + coordinates["16.1"][1]) / 2
+
+    make_equal("25.1", "24.2", longitude=False, goto=True)
 
     left, right = 500, -500
     top, bottom = 500, -500
@@ -189,8 +253,8 @@ def main():
     for place in root.findall(prefix + "Placemark"):
         name = place.find(prefix + "name").text
         coordinates_new[name] = [0, 0]
-        coordinates_new[name][0] = (coordinates[name][0] - left) * 200000
-        coordinates_new[name][1] = (coordinates[name][1] - top) * 200000
+        coordinates_new[name][0] = (coordinates[name][0] - left) * 370000
+        coordinates_new[name][1] = (coordinates[name][1] - top) * 370000
 
     left, right = 500, -500
     top, bottom = 500, -500
