@@ -1,6 +1,8 @@
 # TMS-Pathfinding
 Find the shortest path between any two rooms in Thornton Middle School (Fremont, CA, USA). The school map was created by using Google Earth, and the path is found using the A* Pathfinding Algorithm.
 
+### Web version coming soon! It is still in development, but here's [the beta version](https://thornton-middle-school.github.io/TMS-Pathfinding/).
+
 ## Dependencies
 - Python 3.12+
 - Pygame 2.5.2+
