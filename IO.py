@@ -1,7 +1,12 @@
-from xml.etree import ElementTree
-from math import sin, cos, pi
+from math import sin, cos, pi, floor
+from collections import defaultdict
 
-def main():
+from xml.etree import ElementTree
+import pickle
+
+from utils import HEIGHT, STAIRCASE_LENGTH, DIAGONAL_DISTANCE, Node, NodeDict, upstairs
+
+def adjust_from_kml() -> dict[str, list[float, float]]:
     prefix = "{http://www.opengis.net/kml/2.2}"
 
     tree = ElementTree.parse("coordinates.kml")
@@ -235,11 +240,10 @@ def main():
     coordinates["16A.1"][1] = coordinates["16.2"][1] = (coordinates["16A.2"][1] + coordinates["16.1"][1]) / 2
 
     make_equal("25.1", "24.2", longitude=False, goto=True)
+    make_equal("D205.3", "D205.1", longitude=False, goto=True)
 
     left, right = 500, -500
     top, bottom = 500, -500
-
-    x_diffs, y_diffs = [], []
 
     for place in root.findall(prefix + "Placemark"):
         name = place.find(prefix + "name").text
@@ -256,40 +260,115 @@ def main():
         coordinates_new[name][0] = (coordinates[name][0] - left) * 370000
         coordinates_new[name][1] = (coordinates[name][1] - top) * 370000
 
-    left, right = 500, -500
-    top, bottom = 500, -500
+    return coordinates_new
 
-    for place in root.findall(prefix + "Placemark"):
-        name = place.find(prefix + "name").text
-        left = min(coordinates_new[name][0], left)
-        right = max(coordinates_new[name][0], right)
-        top = min(coordinates_new[name][1], top)
-        bottom = max(coordinates_new[name][1], bottom)
+def create_graph(coordinates: dict[str, list[float, float]]):
+    points = NodeDict()
+    adjacency = defaultdict(list)
+    
+    locations: dict[tuple[int, int], Node] = {}
 
-    for place in root.findall(prefix + "Placemark"):
-        name = place.find(prefix + "name").text
-        place.find(prefix + "LookAt").find(prefix + "longitude").text = f"{coordinates_new[name][0]}"
-        place.find(prefix + "LookAt").find(prefix + "latitude").text = f"{coordinates_new[name][1]}"
-        place.find(prefix + "Point").find(prefix + "coordinates").text = f"{coordinates_new[name][0]},{coordinates_new[name][1]},{place.find(prefix + "Point").find(prefix + "coordinates").text.split(",")[2]}"
-        # print(coordinates_new[name][0] - coordinates_new[name[:-1] + str(3 - int(name[-1]))][0], coordinates_new[name][1] - coordinates_new[name[:-1] + str(3 - int(name[-1]))][1])
-        #
-        # if coordinates_new[name][0] - coordinates_new[name[:-1] + str(3 - int(name[-1]))][0] == 0 or coordinates_new[name][1] - coordinates_new[name[:-1] + str(3 - int(name[-1]))][1] == 0:
-        #     print(f"NAME {name}")
+    for name, (longitude, latitude) in coordinates.items():
+        original = name
+        name = name[:-2] if (name[0] != "S" or name[:2] == "SG") and name != "D205.3" else name  # D205.3 is a dummy value for C201 & D205 adjacency
 
-        x_diffs.append((coordinates_new[name][0], name))
-        y_diffs.append((coordinates_new[name][1], name))
+        y_subtraction = 425 if upstairs(name) else 30
 
-    tree.write("classrooms.kml")
+        if name in points:
+            points[name].min_x = min(points[name].min_x, longitude)
+            points[name].max_x = max(points[name].max_x, longitude)
+            points[name].min_y = min(points[name].min_y, HEIGHT - latitude - y_subtraction)
+            points[name].max_y = max(points[name].max_y, HEIGHT - latitude - y_subtraction)
+        else:
+            points[name] = Node(min_x=longitude, max_x=longitude, min_y=HEIGHT - latitude - y_subtraction, max_y=HEIGHT - latitude - y_subtraction, type_=name)
+            
+        if original[-1] in ("1", "3") or original[0] == "S" and original[:-2] != "SG":
+            points[name].corner_x = longitude
+            points[name].corner_y = HEIGHT - latitude - y_subtraction
+            
+    adjacency[points["A201"]] = [(points["SA.2"], 14.56), (points["A205"], 29)]
+    adjacency[points["A205"]] = [(points["SA.2"], 43.21), (points["A201"], 29), (points["B201"], 4)]
+    adjacency[points["B201"]] = [(points["A205"], 4), (points["B205"], 22.78), (points["SB.2"], 22.48)]
+    adjacency[points["B205"]] = [(points["A205"], 23.13), (points["B201"], 22.78), (points["SB.2"], 10.33), (points["GB3"], 10.74)]
+    adjacency[points["GB3"]] = [(points["B205"], 10.74), (points["SB.2"], 12.01), (points["BB3"], 7.9)]
+    adjacency[points["BB3"]] = [(points["SB.2"], 19.71), (points["GB3"], 7.9), (points["C201"], 38.9), (points["D205.3"], 11.22)]
+    adjacency[points["D205.3"]] = [(points["BB3"], 11.22), (points["D205"], 27.46), (points["SB.2"], 30.83), (points["SD.2"], 28.55)]
+    adjacency[points["D205"]] = [(points["D205.3"], 27.46), (points["D206"], 22.17), (points["SD.2"], 6.59)]
+    adjacency[points["D206"]] = [(points["D205"], 22.17), (points["D210"], 16.27), (points["SD.2"], 23.77)]
+    adjacency[points["D210"]] = [(points["D206"], 16.27), (points["D212"], 20.1), (points["SD.2"], 39.65), (points["E201"], 36.76)]
+    adjacency[points["D212"]] = [(points["D210"], 20.1), (points["SD.2"], 59.56)]
+    adjacency[points["C201"]] = [(points["BB3"], 38.9), (points["D205.3"], 36.41), (points["C205"], 28.1), (points["SC.2"], 27.76)]
+    adjacency[points["C205"]] = [(points["C201"], 28.1), (points["SC.2"], 4.04)]
+    adjacency[points["E201"]] = [(points["D210"], 36.76), (points["E205"], 28.22), (points["SE.2"], 14.96)]
+    adjacency[points["E205"]] = [(points["E201"], 28.22), (points["SE.2"], 39.47)]
 
-    print(f"X: {left} -> {right}, diff={right - left}")
-    print(f"Y: {top} -> {bottom}, diff={bottom - top}")
+    adjacency[points["SA.2"]] = [(points["A201"], 14.56), (points["A205"], 43.21), (points["SA.1"], STAIRCASE_LENGTH)]
+    adjacency[points["SB.2"]] = [(points["B201"], 22.48), (points["B205"], 10.33), (points["GB3"], 12.01), (points["BB3"], 19.71), (points["D205.3"], 30.83), (points["SB.1"], STAIRCASE_LENGTH)]
+    adjacency[points["SC.2"]] = [(points["C201"], 27.76), (points["C205"], 4.04), (points["SC.1"], STAIRCASE_LENGTH)]
+    adjacency[points["SD.2"]] = [(points["D205"], 6.59), (points["D206"], 23.77), (points["D210"], 39.65), (points["D212"], 59.56), (points["D205.3"], 28.55), (points["SD.1"], STAIRCASE_LENGTH)]
+    adjacency[points["SE.2"]] = [(points["E201"], 14.96), (points["E205"], 39.47), (points["SE.1"], STAIRCASE_LENGTH)]
+    adjacency[points["SA.1"]].append((points["SA.2"], STAIRCASE_LENGTH))
+    adjacency[points["SB.1"]].append((points["SB.2"], STAIRCASE_LENGTH))
+    adjacency[points["SC.1"]].append((points["SC.2"], STAIRCASE_LENGTH))
+    adjacency[points["SD.1"]].append((points["SD.2"], STAIRCASE_LENGTH))
+    adjacency[points["SE.2"]].append((points["SE.2"], STAIRCASE_LENGTH))
 
-    print(f"average diff: {coordinates_new["12.2"][0] - coordinates_new["12.1"][0]}")
+    for name, node in points.items():
+        node.min_x = floor(node.min_x)
+        node.max_x = floor(node.max_x)
+        node.min_y = floor(node.min_y)
+        node.max_y = floor(node.max_y)
+        node.corner_x = floor(node.corner_x)
+        node.corner_y = floor(node.corner_y)
 
-    x_diffs.sort()
-    y_diffs.sort()
+    for node in points.values():
+        locations[(node.corner_x, node.corner_y)] = node
 
-    print(f"min x diff: {min((second[0] - first[0], first[1], second[1]) for first, second in zip(x_diffs[:-1], x_diffs[1:]) if second[0] != first[0])}, min y diff: {min((second[0] - first[0], first[1], second[1]) for first, second in zip(y_diffs[:-1], y_diffs[1:]) if second[0] != first[0])}")
+    min_x, min_y, max_x, max_y = 1000, 1000, -1000, -1000
+
+    for node in points.values():
+        if not upstairs(node):
+            min_x = min(min_x, node.corner_x)
+            max_x = max(max_x, node.corner_x)
+            min_y = min(min_y, node.corner_y)
+            max_y = max(max_y, node.corner_y)
+
+    for x in range(min_x, max_x + 1, 1):
+        for y in range(min_y, max_y + 1, 1):
+            if locations.get((x, y)):
+                continue
+
+            tangencies = 0
+            corner = False
+
+            for node in points.rooms.values():
+                if node.min_x < x < node.max_x and node.min_y < y < node.max_y:
+                    tangencies = 100
+                    break
+
+                if node.min_x <= x <= node.max_x and node.min_y <= y <= node.max_y:
+                    tangencies += 1
+
+                    if x in [node.min_x, node.max_x] and y in [node.min_y, node.max_y]:
+                        corner = True
+                        break
+
+            if tangencies <= 1 or corner:
+                points[f"Empty @ ({x}, {y})"] = Node(x, x, y, y, "empty", corner_x=x, corner_y=y)
+                locations[(x, y)] = points[f"Empty @ ({x}, {y})"]
+
+    for node in points.values():
+        if not upstairs(node) or node.type_ == "empty":
+            for x_change in range(-1, 2, 1):
+                for y_change in range(-1, 2, 1):
+                    if (x_change or y_change) and (adjacent := locations.get((node.corner_x + x_change, node.corner_y + y_change))):
+                        adjacency[node].append((adjacent, 1 if abs(x_change) + abs(y_change) == 1 else DIAGONAL_DISTANCE))
+                        
+    with open("classrooms.pkl", "wb") as file:
+        pickle.dump(points, file)
+        
+    with open("adjacency.pkl", "wb") as file:   
+        pickle.dump(adjacency, file)
 
 if __name__ == "__main__":
-    main()
+    create_graph(adjust_from_kml())

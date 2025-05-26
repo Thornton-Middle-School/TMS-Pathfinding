@@ -1,14 +1,83 @@
 import sys
 import asyncio
+import pickle
+
+from math import floor
 
 from heapq import heappush, heappop
-from graph import *
+from collections import defaultdict
 
+from utils import *
+
+def shortest_path(start: Node, ends: Node, adjacency: defaultdict[Node, list[list[Node, float]]], window: pygame.Surface) -> list[Node]:
+    priority_queue: tuple[float, Node, float, float] = []
+    start.distance = 0
+    
+    start_heuristic = closest_to_heuristic(start, ends, octile_heuristic)
+    heappush(priority_queue, (start_heuristic, start_heuristic, 0, start))
+
+    visited = {start}
+
+    best_end = None
+    
+    while priority_queue:
+        _, _, distance, node = heappop(priority_queue)
+
+        if distance > node.distance:
+            continue
+
+        if node in ends:
+            best_end = node
+            break
+
+        for adjacent, edge_weight in adjacency.get(node):
+            if adjacent.distance > distance + edge_weight:
+                adjacent.from_ = (node, edge_weight)
+                adjacent.distance = distance + edge_weight
+
+                prediction = closest_to_heuristic(adjacent, ends, octile_heuristic)
+                heappush(priority_queue, (prediction + distance + edge_weight,
+                                            prediction, distance + edge_weight, adjacent))
+
+                visited.add(adjacent)
+
+    node = best_end
+    distance = 0.0
+
+    while node.from_ is not None:
+        print(node)
+        
+        if not (node.type_[:-1] == node.from_[0].type_[:-1] and node.type_[0] == "S" and node.type_ != "SG"):
+            pygame.draw.line(window, ORANGE, (node.corner_x, node.corner_y),
+                                (node.from_[0].corner_x, node.from_[0].corner_y), width=2)
+
+        _next = node.from_
+        distance += _next[1]
+        node.from_ = None
+        node = _next[0]
+
+    start.distance = float("inf")
+    distance *= SCALE
+
+    for node in visited:
+        node.distance = float("inf")
+
+    pygame.draw.circle(window, GREEN, (start.corner_x, start.corner_y), 4)
+    pygame.draw.circle(window, RED, (best_end.corner_x, best_end.corner_y), 4)
+
+    pygame.draw.rect(window, WHITE, (50, 70, 150, 70))
+
+    results_text = (f"Distance: {floor(distance)} ft\n"
+                    f"Walking Time: ~ {floor((distance / 308 * 75) // 60)}:{("0" if floor((distance / 308 * 75) % 60) < 10 else "") + str(floor((distance / 308 * 75) % 60))}")
+
+    multiline_render(window, results_text, 1205, 357, TYPING_SIZE_FONT, center=True)
+    pygame.display.update()
+    
 async def main():
     window = pygame.display.set_mode((LENGTH, HEIGHT))
     window.fill(WHITE)
 
-    pygame.display.set_caption("Thornton Pathfinding")
+    pygame.display.set_caption("Thornton Middle School Pathfinding")
     pygame.display.set_icon(pygame.image.load("logo.png"))
 
     loading = HUGE_FONT.render("Loading...", True, BLACK)
@@ -17,59 +86,18 @@ async def main():
 
     await asyncio.sleep(0)
 
-    rooms, locations = create_graph()
-    print(locations)
-
-    original = rooms.copy()
-
-    min_x, min_y, max_x, max_y = 1000, 1000, -1000, -1000
-
-    for node in original.values():
-        if not upstairs(node):
-            min_x = min(min_x, node.corner_x)
-            max_x = max(max_x, node.corner_x)
-            min_y = min(min_y, node.corner_y)
-            max_y = max(max_y, node.corner_y)
-
-    for x in drange(min_x, max_x + 1, 1):
-        for y in drange(min_y, max_y + 1, 1):
-            if locations.get((x, y)):
-                continue
-
-            tangencies = 0
-            corner = False
-
-            for node in original.values():
-                if node.min_x < x < node.max_x and node.min_y < y < node.max_y:
-                    tangencies = 100
-                    break
-
-                if node.min_x <= x <= node.max_x and node.min_y <= y <= node.max_y:
-                    tangencies += 1
-
-                    if x in [node.min_x, node.max_x] and y in [node.min_y, node.max_y]:
-                        corner = True
-                        break
-
-            if tangencies <= 1 or corner:
-                rooms[f"Empty @ ({x}, {y})"] = Node(x, x, y, y, "empty", corner_x=x, corner_y=y)
-                locations[(x, y)] = rooms[f"Empty @ ({x}, {y})"]
-
-    for node in rooms.values():
-        if not upstairs(node) or node.type_ == "empty":
-            for x_change in drange(-1, 2, 1):
-                for y_change in drange(-1, 2, 1):
-                    if not (x_change == 0 and y_change == 0) and (
-                            adjacent := locations.get((node.corner_x + x_change, node.corner_y + y_change))):
-                        node.adjacent_nodes.append(
-                            (adjacent, 1 if abs(x_change) + abs(y_change) == 1 else DIAGONAL_DISTANCE))
-
+    with open("classrooms.pkl", "rb") as file:
+        points: NodeDict = pickle.load(file)
+        
+    with open("adjacency.pkl", "rb") as file:    
+        adjacency: defaultdict[Node, list[list[Node, float]]] = defaultdict(list, pickle.load(file))
+    
     while True:
         await asyncio.sleep(0)
 
         window.fill(WHITE)
 
-        for node in original.values():
+        for node in points.rooms.values():
             if node.type_ == "D205.3":
                 continue
 
@@ -106,22 +134,26 @@ async def main():
                 window.blit(text, ((node.min_x + node.max_x) / 2 - text.get_width() / 2,
                                    (node.min_y + node.max_y) / 2 - text.get_height() / 2))
 
-        multiline_render(window, "Upstairs", 495, 50, HUGE_FONT, color=BLACK, center=True)
-        window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (188, 374))
+        multiline_render(window, "Upstairs", 495, 70, HUGE_FONT, color=BLACK, center=True)
+        window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (188, 379))
 
-        start_text_box = pygame.Rect(1210, 127, 120, 50)
-        end_text_box = pygame.Rect(1210, 230, 120, 50)
-        submit_button = pygame.Rect(1150, 414, 120, 50)
+        start_text_box = pygame.Rect(1005, 97, 150, 60)
+        end_text_box = pygame.Rect(1005, 197, 150, 60)
+        submit_button = pygame.Rect(1305, 147, 150, 60)
 
         pygame.draw.rect(window, BLACK, start_text_box, width=5)
         pygame.draw.rect(window, BLACK, end_text_box, width=5)
         pygame.draw.rect(window, GREEN, submit_button)
+        pygame.draw.rect(window, BLACK, submit_button, width=5)
 
-        window.blit(TYPING_SIZE_FONT.render("Start: ", True, BLACK), (1080, 140))
-        window.blit(TYPING_SIZE_FONT.render("  End: ", True, BLACK), (1080, 236))
+        start_render_text = TYPING_SIZE_FONT.render("Start: ", True, BLACK)
+        end_render_text = TYPING_SIZE_FONT.render("  End: ", True, BLACK)
+        
+        window.blit(start_render_text, (875, 129 - start_render_text.get_height() / 2))
+        window.blit(end_render_text, (875, 229 - end_render_text.get_height() / 2))
 
         submit = TYPING_SIZE_FONT.render("Submit", True, BLACK)
-        window.blit(submit, (1210 - submit.get_width() / 2, 439 - submit.get_height() / 2))
+        window.blit(submit, (1380 - submit.get_width() / 2, 182 - submit.get_height() / 2))
 
         key_text = ("Key:\n"
                     "B/BB or G/GB + (identifier) (very small font): Boys/Girls Bathroom\n"
@@ -136,16 +168,15 @@ async def main():
         instructions = ("Instructions:\n"
                         "1. Click on the start and end boxes to enter the room numbers.\n"
                         "    Note: for bathrooms, type up the name as shown with or without the second letter (B).\n"
-                        "    If you just want to go to a bathroom, type B/BB or G/GB. This only applies for the\n"
-                        "    destination room.\n"
+                        "    For the destination room, typing just B/BB or G/GB will show the path to the closest\n"
+                        "    Boys'/Girls' bathroom.\n"
                         "2. When complete, press submit or press enter/return on your keyboard.\n"
                         "3. After a few seconds, a path should show up. Green is the start, ed is the end, orange\n"
                         "    is the path itself. \n"
                         "4. If you want to reset, click the reset button.\n")
 
         width = max(INSTRUCTION_FONT.render(line, True, BLACK).get_width() for line in instructions.split("\n"))
-        print(width)
-        multiline_render(window, instructions, (2411 - width) / 2, HEIGHT - 50 - KEY_FONT.get_height() * 7 - INSTRUCTION_FONT.get_height() * 9, INSTRUCTION_FONT)
+        multiline_render(window, instructions, (2411 - width) / 2, HEIGHT - 50 - KEY_FONT.get_height() * 7 - INSTRUCTION_FONT.get_height() * 14, INSTRUCTION_FONT, spacing=1.5)
 
         pygame.display.update()
 
@@ -168,14 +199,18 @@ async def main():
                 if event.type == pygame.MOUSEBUTTONUP:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
 
-                    if start_text_box.left < mouse_x < start_text_box.right and start_text_box.top < mouse_y < start_text_box.bottom:
+                    # Add extra padding for web click detection
+                    if (start_text_box.left - 5) <= mouse_x <= (start_text_box.right + 5) and (start_text_box.top - 5) <= mouse_y <= (start_text_box.bottom + 5):
                         current = start_text_box
+                        pygame.display.update()
 
-                    elif end_text_box.left < mouse_x < end_text_box.right and end_text_box.top < mouse_y < end_text_box.bottom:
+                    elif (end_text_box.left - 5) <= mouse_x <= (end_text_box.right + 5) and (end_text_box.top - 5) <= mouse_y <= (end_text_box.bottom + 5):
                         current = end_text_box
+                        pygame.display.update()
 
-                    elif submit_button.left < mouse_x < submit_button.right and submit_button.top < mouse_y < submit_button.right:
+                    elif (submit_button.left - 5) <= mouse_x <= (submit_button.right + 5) and (submit_button.top - 5) <= mouse_y <= (submit_button.bottom + 5):
                         submit = True
+                        pygame.display.update()
 
                     else:
                         current = None
@@ -216,22 +251,29 @@ async def main():
                     end_text_surface = TYPING_SIZE_FONT.render(end_text, True, BLACK)
 
                     window.blit(start_text_surface,
-                                (1270 - start_text_surface.get_width() / 2, 152 - start_text_surface.get_height() / 2))
+                                (1080 - start_text_surface.get_width() / 2, 130 - start_text_surface.get_height() / 2))
                     window.blit(end_text_surface,
-                                (1270 - end_text_surface.get_width() / 2, 255 - end_text_surface.get_height() / 2))
+                                (1080 - end_text_surface.get_width() / 2, 230 - end_text_surface.get_height() / 2))
                     pygame.display.update()
 
                 if submit:
+                    original_start_text, original_end_text = start_text, end_text
+                    
                     start_text = start_text.upper()
                     end_text = end_text.upper()
-
+                    
+                    if not start_text or not end_text:
+                        window.blit(invalid_surface, (1205 - invalid_surface.get_width() / 2, 357 - invalid_surface.get_height() / 2))
+                        pygame.display.update()
+                        
+                        start_text, end_text = original_start_text, original_end_text
+                        continue
+                    
                     if start_text == "OFFICE":
                         start_text = "Office"
 
                     if end_text == "OFFICE":
                         end_text = "Office"
-
-                    print(start_text, end_text)
 
                     if start_text in ("G", "B") or start_text[0] in ("G", "B") and start_text[1] in ("2", "3", "4"):
                         start_text = start_text[0] + "B" + start_text[1:]
@@ -245,13 +287,11 @@ async def main():
                     if end_text in ("GB1", "BB1"):
                         end_text = end_text[0] + "1"
 
-                    print(start_text, end_text)
-
                     start_bad = (start_text == "GB")
                     end_bad = False
 
                     for text, text_box in ((start_text, start_text_box), (end_text, end_text_box)):
-                        if not original.get(text) and text not in ("G1", "B1") or text[0] == "S" and text != "SG" or text == "D205.3":
+                        if not points.rooms.get(text) and text not in ("G1", "B1") or text[0] == "S" and text != "SG" or text == "D205.3":
                             pygame.draw.rect(window, RED, text_box, width=5)
                             start_bad = True
 
@@ -260,12 +300,15 @@ async def main():
 
                     if start_bad or end_bad:
                         window.blit(invalid_surface,
-                                    (1210 - invalid_surface.get_width() / 2, 344 - invalid_surface.get_height() / 2))
+                                    (1205 - invalid_surface.get_width() / 2, 357 - invalid_surface.get_height() / 2))
                         pygame.display.update()
+                        
+                        start_text, end_text = original_start_text, original_end_text
+                        continue
 
                     else:
                         pygame.draw.rect(window, WHITE, (
-                            1210 - invalid_surface.get_width() / 2, 344 - invalid_surface.get_height() / 2,
+                            1205 - invalid_surface.get_width() / 2, 357 - invalid_surface.get_height() / 2,
                             invalid_surface.get_width(),
                             invalid_surface.get_height()))
                         complete = True
@@ -284,83 +327,27 @@ async def main():
             start_text = start_text[0] + "B"
 
         if end_text in ("BB", "GB"):
-            start, ends = rooms[start_text], ([rooms["BB"], rooms["BB2"], rooms["BB3"], rooms["BB4"]] if end_text[0] == "B"
-                                              else [rooms["GB"], rooms["GB2"], rooms["GB3"], rooms["GB4"]])
+            start, ends = points[start_text].copy(), ([points["BB"], points["BB2"], points["BB3"], points["BB4"]] if end_text[0] == "B"
+                                              else [points["GB"], points["GB2"], points["GB3"], points["GB4"]])
 
         else:
             if end_text in ("G1", "B1"):
                 end_text = end_text[0] + "B"
+                
+            start, ends = points[start_text].copy(), [points[end_text]]
 
-            start, ends = rooms[start_text], [rooms[end_text]]
-
-        priority_queue: tuple[float, Node, float, float] = []
-        start.distance = 0
-
-        start_heuristic = overall_heuristic(start, ends, octile_heuristic)
-        heappush(priority_queue, (start_heuristic, start_heuristic, 0, start))
-
-        visited = {start}
-
-        best_end = None
-
-        while priority_queue:
-            _, _, distance, node = heappop(priority_queue)
-
-            if distance > node.distance:
-                continue
-
-            if node in ends:
-                best_end = node
-                break
-
-            for adjacent, edge_weight in node.adjacent_nodes:
-                if adjacent.distance > distance + edge_weight:
-                    adjacent.from_ = (node, edge_weight)
-                    adjacent.distance = distance + edge_weight
-
-                    prediction = overall_heuristic(adjacent, ends, octile_heuristic)
-                    heappush(priority_queue, (prediction + distance + edge_weight,
-                                              prediction, distance + edge_weight, adjacent))
-
-                    visited.add(adjacent)
-
-        node = best_end
-        distance = 0.0
-
-        while node.from_ is not None:
-            if not (node.type_[:-1] == node.from_[0].type_[:-1] and node.type_[0] == "S" and node.type_ != "SG"):
-                pygame.draw.line(window, ORANGE, (node.corner_x, node.corner_y),
-                                 (node.from_[0].corner_x, node.from_[0].corner_y), width=2)
-
-            _next = node.from_
-            distance += _next[1]
-            node.from_ = None
-            node = _next[0]
-
-        print(distance)
-
-        start.distance = float("inf")
-        distance *= SCALE
-
-        for node in visited:
-            node.distance = float("inf")
-
-        pygame.draw.circle(window, GREEN, (start.corner_x, start.corner_y), 4)
-        pygame.draw.circle(window, RED, (best_end.corner_x, best_end.corner_y), 4)
-
+        ends = [end.copy() for end in ends]
+                
+        shortest_path(start, ends, adjacency, window)
+        
         pygame.draw.rect(window, RED, submit_button)
+        pygame.draw.rect(window, BLACK, submit_button, width=5)
+                
         reset = TYPING_SIZE_FONT.render("Reset", True, BLACK)
-        window.blit(reset, (1210 - reset.get_width() / 2, 439 - reset.get_height() / 2))
-
-        pygame.draw.rect(window, WHITE, (50, 70, 150, 70))
-
-        results_text = (f"Distance: {floor(distance)} ft\n"
-                        f"Walking Time: {floor((distance / 308 * 75) // 60)}:{("0" if floor((distance / 308 * 75) % 60) < 10 else "") + str(floor((distance / 308 * 75) % 60))}")
-
-        multiline_render(window, results_text, 1205, 347, TYPING_SIZE_FONT, center=True)
-
+        window.blit(reset, (1380 - reset.get_width() / 2, 182 - reset.get_height() / 2))
+        
         pygame.display.update()
-
+        
         await asyncio.sleep(0)
 
         while True:
@@ -370,17 +357,18 @@ async def main():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-
+                
                 if event.type == pygame.MOUSEBUTTONUP:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
-
-                    if submit_button.left <= mouse_x <= submit_button.right and submit_button.top <= mouse_y <= submit_button.bottom:
+                    
+                    if (submit_button.left - 5) <= mouse_x <= (submit_button.right + 5) and (submit_button.top - 5) <= mouse_y <= (submit_button.bottom + 5):
                         reset = True
                         break
 
             if reset:
                 break
-
+            
+            await asyncio.sleep(0)
 
 if __name__ == "__main__":
     asyncio.run(main())
