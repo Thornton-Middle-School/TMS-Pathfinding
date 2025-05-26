@@ -9,6 +9,15 @@ from collections import defaultdict
 
 from utils import *
 
+def render_input_default(window: pygame.Surface, label_end: bool, color: tuple[int, int, int]=BLACK):
+    render_text = TYPING_SIZE_FONT.render("  End: " if label_end else "Start: ", True, color)
+    window.blit(render_text, (875, 128 + 100 * label_end - render_text.get_height() / 2))
+
+    text_box = pygame.Rect(1005, 97 + 100 * label_end, 150, 60)
+    pygame.draw.rect(window, color, text_box, width=5)
+    
+    pygame.display.update()
+
 def shortest_path(start: Node, ends: Node, adjacency: defaultdict[Node, list[list[Node, float]]], window: pygame.Surface) -> list[Node]:
     priority_queue: tuple[float, Node, float, float] = []
     start.distance = 0
@@ -139,21 +148,17 @@ async def main():
 
         start_text_box = pygame.Rect(1005, 97, 150, 60)
         end_text_box = pygame.Rect(1005, 197, 150, 60)
+        
+        render_input_default(window, True)
+        render_input_default(window, False)
+        
         submit_button = pygame.Rect(1305, 147, 150, 60)
 
-        pygame.draw.rect(window, BLACK, start_text_box, width=5)
-        pygame.draw.rect(window, BLACK, end_text_box, width=5)
         pygame.draw.rect(window, GREEN, submit_button)
         pygame.draw.rect(window, BLACK, submit_button, width=5)
-
-        start_render_text = TYPING_SIZE_FONT.render("Start: ", True, BLACK)
-        end_render_text = TYPING_SIZE_FONT.render("  End: ", True, BLACK)
         
-        window.blit(start_render_text, (875, 129 - start_render_text.get_height() / 2))
-        window.blit(end_render_text, (875, 229 - end_render_text.get_height() / 2))
-
         submit = TYPING_SIZE_FONT.render("Submit", True, BLACK)
-        window.blit(submit, (1380 - submit.get_width() / 2, 182 - submit.get_height() / 2))
+        window.blit(submit, (1380 - submit.get_width() / 2, 179 - submit.get_height() / 2))
 
         key_text = ("Key:\n"
                     "B/BB or G/GB + (identifier) (very small font): Boys/Girls Bathroom\n"
@@ -251,9 +256,9 @@ async def main():
                     end_text_surface = TYPING_SIZE_FONT.render(end_text, True, BLACK)
 
                     window.blit(start_text_surface,
-                                (1080 - start_text_surface.get_width() / 2, 130 - start_text_surface.get_height() / 2))
+                                (1080 - start_text_surface.get_width() / 2, 128 - start_text_surface.get_height() / 2))
                     window.blit(end_text_surface,
-                                (1080 - end_text_surface.get_width() / 2, 230 - end_text_surface.get_height() / 2))
+                                (1080 - end_text_surface.get_width() / 2, 228 - end_text_surface.get_height() / 2))
                     pygame.display.update()
 
                 if submit:
@@ -262,43 +267,30 @@ async def main():
                     start_text = start_text.upper()
                     end_text = end_text.upper()
                     
-                    if not start_text or not end_text:
-                        window.blit(invalid_surface, (1205 - invalid_surface.get_width() / 2, 357 - invalid_surface.get_height() / 2))
-                        pygame.display.update()
+                    bads = [not start_text, not end_text]
+                    texts = [start_text, end_text]
+
+                    for index in range(2):
+                        if bads[index]:
+                            continue
                         
-                        start_text, end_text = original_start_text, original_end_text
-                        continue
+                        if texts[index] in ("OFFICE", "BAND"):
+                            texts[index] = texts[index][0] + texts[index][1:].lower()
+                            print(texts[index])
+                        
+                        if texts[index] in ("G", "B") or texts[index][0] in ("G", "B") and texts[index][1] in ("2", "3", "4"):
+                            texts[index] = texts[index][0] + "B" + texts[index][1:]
+
+                        if texts[index] in ("GB1", "BB1"):
+                            texts[index] = texts[index][0] + "1"
+                        
+                        if not points.rooms.get(texts[index]) and texts[index] not in ("G1", "B1") or texts[index][0] == "S" and texts[index] != "SG" or texts[index] == "D205.3":
+                            bads[index] = True
+                            
+                    for index in range(2):
+                        render_input_default(window, index==1, color=RED if bads[index] else BLACK)
                     
-                    if start_text == "OFFICE":
-                        start_text = "Office"
-
-                    if end_text == "OFFICE":
-                        end_text = "Office"
-
-                    if start_text in ("G", "B") or start_text[0] in ("G", "B") and start_text[1] in ("2", "3", "4"):
-                        start_text = start_text[0] + "B" + start_text[1:]
-
-                    if end_text in ("G", "B") or end_text[0] in ("G", "B") and end_text[1] in ("2", "3", "4"):
-                        end_text = end_text[0] + "B" + end_text[1:]
-
-                    if start_text in ("GB1", "BB1"):
-                        start_text = start_text[0] + "1"
-
-                    if end_text in ("GB1", "BB1"):
-                        end_text = end_text[0] + "1"
-
-                    start_bad = (start_text == "GB")
-                    end_bad = False
-
-                    for text, text_box in ((start_text, start_text_box), (end_text, end_text_box)):
-                        if not points.rooms.get(text) and text not in ("G1", "B1") or text[0] == "S" and text != "SG" or text == "D205.3":
-                            pygame.draw.rect(window, RED, text_box, width=5)
-                            start_bad = True
-
-                        else:
-                            pygame.draw.rect(window, BLACK, text_box, width=5)
-
-                    if start_bad or end_bad:
+                    if any(bads):
                         window.blit(invalid_surface,
                                     (1205 - invalid_surface.get_width() / 2, 357 - invalid_surface.get_height() / 2))
                         pygame.display.update()
@@ -312,6 +304,8 @@ async def main():
                             invalid_surface.get_width(),
                             invalid_surface.get_height()))
                         complete = True
+                        
+                        start_text, end_text = texts
 
             if complete:
                 break
@@ -344,7 +338,7 @@ async def main():
         pygame.draw.rect(window, BLACK, submit_button, width=5)
                 
         reset = TYPING_SIZE_FONT.render("Reset", True, BLACK)
-        window.blit(reset, (1380 - reset.get_width() / 2, 182 - reset.get_height() / 2))
+        window.blit(reset, (1380 - reset.get_width() / 2, 179 - reset.get_height() / 2))
         
         pygame.display.update()
         

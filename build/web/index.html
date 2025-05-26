@@ -231,7 +231,11 @@ config = {
     gui_debug : 3,
     cdn : "https://pygame-web.github.io/archives/0.9/",
     autorun : 0,
-    PYBUILD : "3.12"
+    PYBUILD : "3.12",
+    canvas: {
+        willReadFrequently: true
+    },
+    css_font: "TimesWeb, serif"
 }
 
 </script>
@@ -243,6 +247,18 @@ config = {
     <meta name="viewport" content="height=device-height, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes"/>
+
+    <!-- Add font preloading and embedding -->
+    <link rel="preload" href="times.ttf" as="font" type="font/ttf" crossorigin>
+    <style>
+        @font-face {
+            font-family: 'TimesWeb';
+            src: url('times.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
 
     <link rel="prefetch" href="https://pygame-web.github.io/archives/0.9/pythonrc.py">
     <link rel="prefetch" href="https://pygame-web.github.io/archives/0.9/vt/xterm.js">
