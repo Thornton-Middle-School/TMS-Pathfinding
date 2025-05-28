@@ -79,7 +79,7 @@ def shortest_path(start: Node, ends: Node, adjacency: defaultdict[Node, list[lis
     results_text = (f"Distance: {floor(distance)} ft\n"
                     f"Walking Time: ~ {floor((distance / 308 * 75) // 60)}:{("0" if floor((distance / 308 * 75) % 60) < 10 else "") + str(floor((distance / 308 * 75) % 60))}")
 
-    multiline_render(window, results_text, 1205, 357, TYPING_SIZE_FONT, center=True)
+    multiline_render(window, results_text, 1205, 362, TYPING_SIZE_FONT, center=True)
     pygame.display.update()
     
 async def main():
@@ -158,7 +158,7 @@ async def main():
         pygame.draw.rect(window, BLACK, submit_button, width=5)
         
         submit = TYPING_SIZE_FONT.render("Submit", True, BLACK)
-        window.blit(submit, (1380 - submit.get_width() / 2, 179 - submit.get_height() / 2))
+        window.blit(submit, (1380 - submit.get_width() / 2, 182 - submit.get_height() / 2))
 
         key_text = ("Key:\n"
                     "B/BB or G/GB + (identifier) (very small font): Boys/Girls Bathroom\n"
@@ -256,9 +256,9 @@ async def main():
                     end_text_surface = TYPING_SIZE_FONT.render(end_text, True, BLACK)
 
                     window.blit(start_text_surface,
-                                (1080 - start_text_surface.get_width() / 2, 128 - start_text_surface.get_height() / 2))
+                                (1080 - start_text_surface.get_width() / 2, 131 - start_text_surface.get_height() / 2))
                     window.blit(end_text_surface,
-                                (1080 - end_text_surface.get_width() / 2, 228 - end_text_surface.get_height() / 2))
+                                (1080 - end_text_surface.get_width() / 2, 231 - end_text_surface.get_height() / 2))
                     pygame.display.update()
 
                 if submit:
@@ -292,7 +292,7 @@ async def main():
                     
                     if any(bads):
                         window.blit(invalid_surface,
-                                    (1205 - invalid_surface.get_width() / 2, 357 - invalid_surface.get_height() / 2))
+                                    (1205 - invalid_surface.get_width() / 2, 367 - invalid_surface.get_height() / 2))
                         pygame.display.update()
                         
                         start_text, end_text = original_start_text, original_end_text
@@ -300,7 +300,7 @@ async def main():
 
                     else:
                         pygame.draw.rect(window, WHITE, (
-                            1205 - invalid_surface.get_width() / 2, 357 - invalid_surface.get_height() / 2,
+                            1205 - invalid_surface.get_width() / 2, 367 - invalid_surface.get_height() / 2,
                             invalid_surface.get_width(),
                             invalid_surface.get_height()))
                         complete = True
@@ -338,7 +338,7 @@ async def main():
         pygame.draw.rect(window, BLACK, submit_button, width=5)
                 
         reset = TYPING_SIZE_FONT.render("Reset", True, BLACK)
-        window.blit(reset, (1380 - reset.get_width() / 2, 179 - reset.get_height() / 2))
+        window.blit(reset, (1380 - reset.get_width() / 2, 182 - reset.get_height() / 2))
         
         pygame.display.update()
         
