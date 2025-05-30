@@ -51,7 +51,7 @@ class Node:
         return hash((self.min_x, self.max_x, self.min_y, self.max_y, self.color, self.type_))
 
     def __repr__(self):
-        return f"{self.type_} @ ({self.min_x}, {self.min_y}), ({self.max_x}, {self.max_y})"
+        return f"{self.type_} @ ({self.min_x}, {self.min_y})<->({self.max_x}, {self.max_y})"
 
     def __lt__(self, other):
         return (self.min_x, self.max_x, self.min_y, self.max_y, self.color, self.type_) < (other.min_x, other.max_x, other.min_y, other.max_y, other.color, other.type_)

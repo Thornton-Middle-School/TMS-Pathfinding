@@ -286,6 +286,14 @@ def create_graph(coordinates: dict[str, list[float, float]]):
             points[name].corner_x = longitude
             points[name].corner_y = HEIGHT - latitude - y_subtraction
             
+    for name, node in points.items():
+        node.min_x = floor(node.min_x)
+        node.max_x = floor(node.max_x)
+        node.min_y = floor(node.min_y)
+        node.max_y = floor(node.max_y)
+        node.corner_x = floor(node.corner_x)
+        node.corner_y = floor(node.corner_y)
+            
     adjacency[points["A201"]] = [(points["SA.2"], 14.56), (points["A205"], 29)]
     adjacency[points["A205"]] = [(points["SA.2"], 43.21), (points["A201"], 29), (points["B201"], 4)]
     adjacency[points["B201"]] = [(points["A205"], 4), (points["B205"], 22.78), (points["SB.2"], 22.48)]
@@ -307,25 +315,17 @@ def create_graph(coordinates: dict[str, list[float, float]]):
     adjacency[points["SC.2"]] = [(points["C201"], 27.76), (points["C205"], 4.04), (points["SC.1"], STAIRCASE_LENGTH)]
     adjacency[points["SD.2"]] = [(points["D205"], 6.59), (points["D206"], 23.77), (points["D210"], 39.65), (points["D212"], 59.56), (points["D205.3"], 28.55), (points["SD.1"], STAIRCASE_LENGTH)]
     adjacency[points["SE.2"]] = [(points["E201"], 14.96), (points["E205"], 39.47), (points["SE.1"], STAIRCASE_LENGTH)]
-    adjacency[points["SA.1"]].append((points["SA.2"], STAIRCASE_LENGTH))
-    adjacency[points["SB.1"]].append((points["SB.2"], STAIRCASE_LENGTH))
-    adjacency[points["SC.1"]].append((points["SC.2"], STAIRCASE_LENGTH))
-    adjacency[points["SD.1"]].append((points["SD.2"], STAIRCASE_LENGTH))
-    adjacency[points["SE.2"]].append((points["SE.2"], STAIRCASE_LENGTH))
-
-    for name, node in points.items():
-        node.min_x = floor(node.min_x)
-        node.max_x = floor(node.max_x)
-        node.min_y = floor(node.min_y)
-        node.max_y = floor(node.max_y)
-        node.corner_x = floor(node.corner_x)
-        node.corner_y = floor(node.corner_y)
+    adjacency[points["SA.1"]] = [(points["SA.2"], STAIRCASE_LENGTH)]
+    adjacency[points["SB.1"]] = [(points["SB.2"], STAIRCASE_LENGTH)]
+    adjacency[points["SC.1"]] = [(points["SC.2"], STAIRCASE_LENGTH)]
+    adjacency[points["SD.1"]] = [(points["SD.2"], STAIRCASE_LENGTH)]
+    adjacency[points["SE.1"]] = [(points["SE.2"], STAIRCASE_LENGTH)]
 
     for node in points.values():
         locations[(node.corner_x, node.corner_y)] = node
 
     min_x, min_y, max_x, max_y = 1000, 1000, -1000, -1000
-
+    
     for node in points.values():
         if not upstairs(node):
             min_x = min(min_x, node.corner_x)
@@ -363,7 +363,7 @@ def create_graph(coordinates: dict[str, list[float, float]]):
                 for y_change in range(-1, 2, 1):
                     if (x_change or y_change) and (adjacent := locations.get((node.corner_x + x_change, node.corner_y + y_change))):
                         adjacency[node].append((adjacent, 1 if abs(x_change) + abs(y_change) == 1 else DIAGONAL_DISTANCE))
-                        
+    
     with open("classrooms.pkl", "wb") as file:
         pickle.dump(points, file)
         
