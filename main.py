@@ -40,8 +40,6 @@ def shortest_path(start: Node, ends: Node, points: NodeDict, adjacency: defaultd
         if node in ends:
             best_end = node
             break
-        
-        if node.min_x == 479:
 
         for adjacent, edge_weight in adjacency.get(node):
             if adjacent.distance > distance + edge_weight:
@@ -104,8 +102,6 @@ async def main():
         
     with open("adjacency.pkl", "rb") as file:    
         adjacency: defaultdict[Node, list[list[Node, float]]] = defaultdict(list, pickle.load(file))
-
-    print(points.rooms)
     
     while True:
         await asyncio.sleep(0)
@@ -200,8 +196,6 @@ async def main():
         complete = False
 
         while True:
-            print(repr(start_text), repr(end_text))
-
             for event in pygame.event.get():
                 submit = False
 
@@ -303,7 +297,6 @@ async def main():
                         
                         if texts[index] in ("OFFICE", "BAND"):
                             texts[index] = texts[index][0] + texts[index][1:].lower()
-                            print(texts[index])
                         
                         if texts[index] in ("G", "B") or len(texts[index]) == 2 and texts[index][0] in ("G", "B") and texts[index][1] in ("2", "3", "4"):
                             texts[index] = texts[index][0] + "B" + texts[index][1:]
