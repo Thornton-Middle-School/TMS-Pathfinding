@@ -42,7 +42,6 @@ def shortest_path(start: Node, ends: Node, points: NodeDict, adjacency: defaultd
             break
         
         if node.min_x == 479:
-            print()
 
         for adjacent, edge_weight in adjacency.get(node):
             if adjacent.distance > distance + edge_weight:
