@@ -7,6 +7,8 @@ from math import floor
 from heapq import heappush, heappop
 from collections import defaultdict
 
+import pygame
+
 from utils import *
 
 def render_input_default(window: pygame.Surface, label_end: bool, color: tuple[int, int, int]=BLACK):
@@ -18,7 +20,7 @@ def render_input_default(window: pygame.Surface, label_end: bool, color: tuple[i
     
     pygame.display.update()
 
-def shortest_path(start: Node, ends: Node, adjacency: defaultdict[Node, list[list[Node, float]]], window: pygame.Surface) -> list[Node]:
+def shortest_path(start: Node, ends: Node, points: NodeDict, adjacency: defaultdict[Node, list[list[Node, float]]], window: pygame.Surface) -> list[Node]:
     priority_queue: tuple[float, Node, float, float] = []
     start.distance = 0
     
@@ -38,6 +40,9 @@ def shortest_path(start: Node, ends: Node, adjacency: defaultdict[Node, list[lis
         if node in ends:
             best_end = node
             break
+        
+        if node.min_x == 479:
+            print()
 
         for adjacent, edge_weight in adjacency.get(node):
             if adjacent.distance > distance + edge_weight:
@@ -100,6 +105,8 @@ async def main():
         
     with open("adjacency.pkl", "rb") as file:    
         adjacency: defaultdict[Node, list[list[Node, float]]] = defaultdict(list, pickle.load(file))
+
+    print(points.rooms)
     
     while True:
         await asyncio.sleep(0)
@@ -194,6 +201,8 @@ async def main():
         complete = False
 
         while True:
+            print(repr(start_text), repr(end_text))
+
             for event in pygame.event.get():
                 submit = False
 
@@ -221,7 +230,7 @@ async def main():
                         current = None
 
                 if event.type == pygame.KEYDOWN:
-                    if current in [None, pygame.K_SPACE]:
+                    if current in [None, pygame.K_SPACE, pygame.K_ESCAPE]:
                         continue
 
                     if event.key == pygame.K_RETURN:
@@ -233,6 +242,16 @@ async def main():
 
                         else:
                             end_text = end_text[:-1]
+                            
+                    elif event.key == pygame.K_TAB:
+                        if current == None:
+                            current = start_text_box
+                            
+                        elif current == start_text_box:
+                            current = end_text_box
+                            
+                        elif current == end_text_box:
+                            submit = True
 
                     else:
                         start_text_surface_original = TYPING_SIZE_FONT.render(start_text + event.unicode.upper(), True,
@@ -262,6 +281,15 @@ async def main():
                     pygame.display.update()
 
                 if submit:
+                    render_input_default(window, True)
+                    render_input_default(window, False)
+
+                    pygame.draw.rect(window, WHITE, (
+                        1205 - invalid_surface.get_width() / 2, 367 - invalid_surface.get_height() / 2,
+                        invalid_surface.get_width(),
+                        invalid_surface.get_height()))
+                    complete = True
+
                     original_start_text, original_end_text = start_text, end_text
                     
                     start_text = start_text.upper()
@@ -278,7 +306,7 @@ async def main():
                             texts[index] = texts[index][0] + texts[index][1:].lower()
                             print(texts[index])
                         
-                        if texts[index] in ("G", "B") or texts[index][0] in ("G", "B") and texts[index][1] in ("2", "3", "4"):
+                        if texts[index] in ("G", "B") or len(texts[index]) == 2 and texts[index][0] in ("G", "B") and texts[index][1] in ("2", "3", "4"):
                             texts[index] = texts[index][0] + "B" + texts[index][1:]
 
                         if texts[index] in ("GB1", "BB1"):
@@ -287,8 +315,9 @@ async def main():
                         if not points.rooms.get(texts[index]) and texts[index] not in ("G1", "B1") or texts[index][0] == "S" and texts[index] != "SG" or texts[index] == "D205.3":
                             bads[index] = True
                             
-                    for index in range(2):
-                        render_input_default(window, index==1, color=RED if bads[index] else BLACK)
+                    for index, is_bad in enumerate(bads):
+                        if is_bad:
+                            render_input_default(window, index == 1, RED)
                     
                     if any(bads):
                         window.blit(invalid_surface,
@@ -303,6 +332,7 @@ async def main():
                             1205 - invalid_surface.get_width() / 2, 367 - invalid_surface.get_height() / 2,
                             invalid_surface.get_width(),
                             invalid_surface.get_height()))
+
                         complete = True
                         
                         start_text, end_text = texts
@@ -332,7 +362,7 @@ async def main():
 
         ends = [end.copy() for end in ends]
                 
-        shortest_path(start, ends, adjacency, window)
+        shortest_path(start, ends, points, adjacency, window)
         
         pygame.draw.rect(window, RED, submit_button)
         pygame.draw.rect(window, BLACK, submit_button, width=5)
