@@ -135,14 +135,13 @@ def euclidean_heuristic(node: Node, end: Node) -> float:
 def closest_to_heuristic(node: Node, ends: list[Node], heuristic_function):
     return min(heuristic_function(node, end) for end in ends)
 
-def multiline_render(window: pygame.surface, text: str, x: float, y: float, font: pygame.font.Font, color=BLACK, center=False, spacing=1.0) -> None:
+def multiline_render(window: pygame.Surface, text: str, x: float, y: float, font: pygame.font.Font, color=BLACK, center=False, spacing=1.0) -> None:
     line_count = text.count("\n") + 1
+    rendered_lines = [font.render(line, True, color) for line in text.split("\n")]
 
     if center:
-        y -= font.get_height() * line_count / 2
+        y -= (sum(rendered.get_height() for rendered in rendered_lines) + font.get_height() * (line_count - 1) * (spacing - 1)) / 2
 
-    for line in text.split("\n"):
-        rendered = font.render(line, True, color)
+    for line, rendered in zip(text.split("\n"), rendered_lines):
         window.blit(rendered, (((x - rendered.get_width() / 2) if center else x), y))
-
-        y += font.get_height() * spacing
+        y += rendered.get_height() + font.get_height() * (spacing - 1)
