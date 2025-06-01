@@ -3,6 +3,7 @@ import asyncio
 import pickle
 
 from math import floor
+from re import sub
 
 from heapq import heappush, heappop
 from collections import defaultdict
@@ -13,7 +14,7 @@ from utils import *
 
 def render_input_default(window: pygame.Surface, label_end: bool, color: tuple[int, int, int]=BLACK):
     render_text = TYPING_SIZE_FONT.render("  End: " if label_end else "Start: ", True, color)
-    window.blit(render_text, (875, 128 + 100 * label_end - render_text.get_height() / 2))
+    window.blit(render_text, (875, 133 + 100 * label_end - render_text.get_height() / 2))
 
     text_box = pygame.Rect(1005, 97 + 100 * label_end, 150, 60)
     pygame.draw.rect(window, color, text_box, width=5)
@@ -79,7 +80,7 @@ def shortest_path(start: Node, ends: Node, points: NodeDict, adjacency: defaultd
     pygame.draw.rect(window, WHITE, (50, 70, 150, 70))
 
     results_text = (f"Distance: {floor(distance)} ft\n"
-                    f"Walking Time: ~ {floor((distance / 308 * 75) // 60)}:{("0" if floor((distance / 308 * 75) % 60) < 10 else "") + str(floor((distance / 308 * 75) % 60))}")
+                    f"Walking Time: ~ {floor((distance / 308 * 75) // 60)}:{("0" if floor((distance / 308 * 75) % 60) < 10 else "") + str(floor((distance / 308 * 75) % 60))} (m:ss)")
 
     multiline_render(window, results_text, 1205, 362, TYPING_SIZE_FONT, center=True)
     pygame.display.update()
@@ -91,8 +92,7 @@ async def main():
     pygame.display.set_caption("Thornton Middle School Pathfinding")
     pygame.display.set_icon(pygame.image.load("logo.png"))
 
-    loading = HUGE_FONT.render("Loading...", True, BLACK)
-    window.blit(loading, (LENGTH / 2 - loading.get_width() / 2, HEIGHT / 2 - loading.get_height() / 2))
+    multiline_render(window, "Loading ...", LENGTH / 2, HEIGHT / 2, HUGE_FONT, color=BLACK, center=True)
     pygame.display.update()
 
     await asyncio.sleep(0)
@@ -111,42 +111,33 @@ async def main():
         for node in points.rooms.values():
             if node.type_ == "D205.3":
                 continue
-
-            pygame.draw.rect(window, BLACK, (node.min_x, node.min_y, node.max_x - node.min_x, node.max_y - node.min_y),
-                             1)
+            
+            pygame.draw.rect(window, BLACK, (node.min_x, node.min_y, node.max_x - node.min_x, node.max_y - node.min_y), 1)
 
             if node.type_ in ["GB", "BB", "GB2", "GB3", "BB2", "BB3", "GB4", "BB4", "21B", "D110", "D210"]:
                 font = MICRO_FONT
-
-            elif node.type_ in ["16A", "20", "29", "28A", "37", "47", "A101", "A201", "A106", "A205", "B101", "B201",
-                                "B106", "B205", "D105", "D205", "D106", "D206", "D112", "D212", "E101", "E107", "E201",
-                                "E205"]:
+                
+            elif node.type_ in ["16A", "20", "29", "28A", "37", "47", "A101", "A201", "A106", "A205", "B101", "B201", "B106", "B205", "D105", "D205", "D106", "D206", "D112", "D212", "E101", "E107", "E201", "E205"]:
                 font = TINY_FONT
-
+                
             elif node.type_ in ["Band", "32", "33", "34", "35", "36", "C101", "C201", "C107", "C205"]:
                 font = MINI_FONT
-
+                
             elif node.type_ in ["SG", "LG"]:
                 font = BIG_FONT
-
+                
             else:
                 font = MEDIUM_FONT
 
-            name = "S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_ if node.type_ not in (
-            "GB", "BB") else node.type_[0] + "1"
-
+            name = "S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_ if node.type_ not in ("GB", "BB") else node.type_[0] + "1"
+            
             if len(name) > 2 and name[:2] in ("BB", "GB") and name[-1] in ("2", "3"):
                 name = f"{name[:-1]}\n{node.type_[-1]}"
-                multiline_render(window, name, (node.min_x + node.max_x) / 2, (node.min_y + node.max_y) / 2, font,
-                                 color=BLUE, center=True)
 
-            else:
-                text = font.render(name, True, BLUE)
-                window.blit(text, ((node.min_x + node.max_x) / 2 - text.get_width() / 2,
-                                   (node.min_y + node.max_y) / 2 - text.get_height() / 2))
+            multiline_render(window, name, (node.min_x + node.max_x) / 2, (node.min_y + node.max_y) / 2, font, color=BLUE, center=True)
 
         multiline_render(window, "Upstairs", 495, 70, HUGE_FONT, color=BLACK, center=True)
-        window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (188, 379))
+        window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (188, 382))
 
         start_text_box = pygame.Rect(1005, 97, 150, 60)
         end_text_box = pygame.Rect(1005, 197, 150, 60)
@@ -155,21 +146,20 @@ async def main():
         render_input_default(window, False)
         
         submit_button = pygame.Rect(1305, 147, 150, 60)
-
+        
         pygame.draw.rect(window, GREEN, submit_button)
         pygame.draw.rect(window, BLACK, submit_button, width=5)
         
-        submit = TYPING_SIZE_FONT.render("Submit", True, BLACK)
-        window.blit(submit, (1380 - submit.get_width() / 2, 182 - submit.get_height() / 2))
+        multiline_render(window, "Submit", 1380, 177, TYPING_SIZE_FONT, color=BLACK, center=True)
 
-        key_text = ("Key:\n"
+        key_text = ("Key (HI = Easter Egg):\n"
                     "B/BB or G/GB + (identifier) (very small font): Boys/Girls Bathroom\n"
                     "LG/SG: Large/Small Gym\n"
                     "BLR/GLR: Boys/Girls Locker Room\n"
                     "S: Stairs")
 
         width = max(KEY_FONT.render(line, True, BLACK).get_width() for line in key_text.split("\n"))
-        multiline_render(window, key_text, (2411 - width) / 2, HEIGHT - 30 - KEY_FONT.get_height() * 7, KEY_FONT,
+        multiline_render(window, key_text, (2411 - width) // 2, HEIGHT - 27 - KEY_FONT.get_height() * 8, KEY_FONT,
                          spacing=1.5)
 
         instructions = ("Instructions:\n"
@@ -183,7 +173,7 @@ async def main():
                         "4. If you want to reset, click the reset button.\n")
 
         width = max(INSTRUCTION_FONT.render(line, True, BLACK).get_width() for line in instructions.split("\n"))
-        multiline_render(window, instructions, (2411 - width) / 2, HEIGHT - 50 - KEY_FONT.get_height() * 7 - INSTRUCTION_FONT.get_height() * 14, INSTRUCTION_FONT, spacing=1.5)
+        multiline_render(window, instructions, (2411 - width) // 2, HEIGHT - 65 - KEY_FONT.get_height() * 8 - INSTRUCTION_FONT.get_height() * 15, INSTRUCTION_FONT, spacing=1.5)
 
         pygame.display.update()
 
@@ -206,7 +196,6 @@ async def main():
                 if event.type == pygame.MOUSEBUTTONUP:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
 
-                    # Add extra padding for web click detection
                     if (start_text_box.left - 5) <= mouse_x <= (start_text_box.right + 5) and (start_text_box.top - 5) <= mouse_y <= (start_text_box.bottom + 5):
                         current = start_text_box
                         pygame.display.update()
@@ -264,13 +253,9 @@ async def main():
                     pygame.draw.rect(window, WHITE, (
                         end_text_box.left + 5, end_text_box.top + 5, end_text_box.width - 10, end_text_box.height - 10))
 
-                    start_text_surface = TYPING_SIZE_FONT.render(start_text, True, BLACK)
-                    end_text_surface = TYPING_SIZE_FONT.render(end_text, True, BLACK)
-
-                    window.blit(start_text_surface,
-                                (1080 - start_text_surface.get_width() / 2, 131 - start_text_surface.get_height() / 2))
-                    window.blit(end_text_surface,
-                                (1080 - end_text_surface.get_width() / 2, 231 - end_text_surface.get_height() / 2))
+                    multiline_render(window, start_text, 1080, 131, TYPING_SIZE_FONT, center=True)
+                    multiline_render(window, end_text, 1080, 231, TYPING_SIZE_FONT, center=True)
+                    
                     pygame.display.update()
 
                 if submit:
@@ -278,19 +263,24 @@ async def main():
                     render_input_default(window, False)
 
                     pygame.draw.rect(window, WHITE, (
-                        1205 - invalid_surface.get_width() / 2, 367 - invalid_surface.get_height() / 2,
+                        1205 - invalid_surface.get_width() // 2, 367 - invalid_surface.get_height() // 2,
                         invalid_surface.get_width(),
                         invalid_surface.get_height()))
-                    complete = True
-
+                    
                     original_start_text, original_end_text = start_text, end_text
                     
                     start_text = start_text.upper()
                     end_text = end_text.upper()
                     
+                    start_text = sub(r"[^A-Z0-9]", "", start_text)
+                    end_text = sub(r"[^A-Z0-9]", "", end_text)
+                    
+                    start_text = start_text.replace(" ", "")
+                    end_text = end_text.replace(" ", "")
+                    
                     bads = [not start_text, not end_text]
                     texts = [start_text, end_text]
-
+                    
                     for index in range(2):
                         if bads[index]:
                             continue
@@ -312,21 +302,14 @@ async def main():
                             render_input_default(window, index == 1, RED)
                     
                     if any(bads):
-                        window.blit(invalid_surface,
-                                    (1205 - invalid_surface.get_width() / 2, 367 - invalid_surface.get_height() / 2))
+                        multiline_render(window, "Invalid Input", 1205, 367, TYPING_SIZE_FONT, color=RED, center=True)
                         pygame.display.update()
                         
                         start_text, end_text = original_start_text, original_end_text
                         continue
 
                     else:
-                        pygame.draw.rect(window, WHITE, (
-                            1205 - invalid_surface.get_width() / 2, 367 - invalid_surface.get_height() / 2,
-                            invalid_surface.get_width(),
-                            invalid_surface.get_height()))
-
-                        complete = True
-                        
+                        complete = True 
                         start_text, end_text = texts
 
             if complete:
@@ -358,10 +341,8 @@ async def main():
         
         pygame.draw.rect(window, RED, submit_button)
         pygame.draw.rect(window, BLACK, submit_button, width=5)
-                
-        reset = TYPING_SIZE_FONT.render("Reset", True, BLACK)
-        window.blit(reset, (1380 - reset.get_width() / 2, 182 - reset.get_height() / 2))
-        
+
+        multiline_render(window, "Reset", 1380, 182, TYPING_SIZE_FONT, color=BLACK, center=True)
         pygame.display.update()
         
         await asyncio.sleep(0)
