@@ -108,43 +108,35 @@ async def main():
 
         window.fill(WHITE)
 
-        # Add debug visuals to investigate alignment issues
         for node in points.rooms.values():
             if node.type_ == "D205.3":
                 continue
-
-            # Draw bounding box
+            
             pygame.draw.rect(window, BLACK, (node.min_x, node.min_y, node.max_x - node.min_x, node.max_y - node.min_y), 1)
 
-            # Calculate center of bounding box
-            center_x = (node.min_x + node.max_x) / 2
-            center_y = (node.min_y + node.max_y) / 2
-
-            # Draw center point for debugging
-            pygame.draw.circle(window, RED, (int(center_x), int(center_y)), 3)
-
-            # Determine font size
             if node.type_ in ["GB", "BB", "GB2", "GB3", "BB2", "BB3", "GB4", "BB4", "21B", "D110", "D210"]:
                 font = MICRO_FONT
+                
             elif node.type_ in ["16A", "20", "29", "28A", "37", "47", "A101", "A201", "A106", "A205", "B101", "B201", "B106", "B205", "D105", "D205", "D106", "D206", "D112", "D212", "E101", "E107", "E201", "E205"]:
                 font = TINY_FONT
+                
             elif node.type_ in ["Band", "32", "33", "34", "35", "36", "C101", "C201", "C107", "C205"]:
                 font = MINI_FONT
+                
             elif node.type_ in ["SG", "LG"]:
                 font = BIG_FONT
             else:
                 font = MEDIUM_FONT
 
-            # Prepare text
             name = "S" if len(node.type_) == 4 and node.type_[-2] == "." else node.type_ if node.type_ not in ("GB", "BB") else node.type_[0] + "1"
+            
             if len(name) > 2 and name[:2] in ("BB", "GB") and name[-1] in ("2", "3"):
                 name = f"{name[:-1]}\n{node.type_[-1]}"
 
-            # Render text
-            multiline_render(window, name, center_x, center_y, font, color=BLUE, center=True)
+            multiline_render(window, name, (node.min_x + node.max_x) / 2, (node.min_y + node.max_y) / 2, font, color=BLUE, center=True)
 
         multiline_render(window, "Upstairs", 495, 70, HUGE_FONT, color=BLACK, center=True)
-        window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (188, 379))
+        window.blit(HUGE_FONT.render("Downstairs", True, BLACK), (188, 382))
 
         start_text_box = pygame.Rect(1005, 97, 150, 60)
         end_text_box = pygame.Rect(1005, 197, 150, 60)
@@ -203,7 +195,6 @@ async def main():
                 if event.type == pygame.MOUSEBUTTONUP:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
 
-                    # Add extra padding for web click detection
                     if (start_text_box.left - 5) <= mouse_x <= (start_text_box.right + 5) and (start_text_box.top - 5) <= mouse_y <= (start_text_box.bottom + 5):
                         current = start_text_box
                         pygame.display.update()
