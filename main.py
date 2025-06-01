@@ -125,6 +125,7 @@ async def main():
                 
             elif node.type_ in ["SG", "LG"]:
                 font = BIG_FONT
+                
             else:
                 font = MEDIUM_FONT
 
@@ -151,14 +152,14 @@ async def main():
         
         multiline_render(window, "Submit", 1380, 177, TYPING_SIZE_FONT, color=BLACK, center=True)
 
-        key_text = ("Key:\n"
+        key_text = ("Key (HI = Easter Egg):\n"
                     "B/BB or G/GB + (identifier) (very small font): Boys/Girls Bathroom\n"
                     "LG/SG: Large/Small Gym\n"
                     "BLR/GLR: Boys/Girls Locker Room\n"
                     "S: Stairs")
 
         width = max(KEY_FONT.render(line, True, BLACK).get_width() for line in key_text.split("\n"))
-        multiline_render(window, key_text, (2411 - width) / 2, HEIGHT - 27 - KEY_FONT.get_height() * 7, KEY_FONT,
+        multiline_render(window, key_text, (2411 - width) // 2, HEIGHT - 27 - KEY_FONT.get_height() * 8, KEY_FONT,
                          spacing=1.5)
 
         instructions = ("Instructions:\n"
@@ -172,7 +173,7 @@ async def main():
                         "4. If you want to reset, click the reset button.\n")
 
         width = max(INSTRUCTION_FONT.render(line, True, BLACK).get_width() for line in instructions.split("\n"))
-        multiline_render(window, instructions, (2411 - width) / 2, HEIGHT - 62 - KEY_FONT.get_height() * 7 - INSTRUCTION_FONT.get_height() * 15, INSTRUCTION_FONT, spacing=1.5)
+        multiline_render(window, instructions, (2411 - width) // 2, HEIGHT - 65 - KEY_FONT.get_height() * 8 - INSTRUCTION_FONT.get_height() * 15, INSTRUCTION_FONT, spacing=1.5)
 
         pygame.display.update()
 
@@ -262,7 +263,7 @@ async def main():
                     render_input_default(window, False)
 
                     pygame.draw.rect(window, WHITE, (
-                        1205 - invalid_surface.get_width() / 2, 367 - invalid_surface.get_height() / 2,
+                        1205 - invalid_surface.get_width() // 2, 367 - invalid_surface.get_height() // 2,
                         invalid_surface.get_width(),
                         invalid_surface.get_height()))
                     
@@ -313,13 +314,7 @@ async def main():
                         continue
 
                     else:
-                        pygame.draw.rect(window, WHITE, (
-                            1205 - invalid_surface.get_width() / 2, 367 - invalid_surface.get_height() / 2,
-                            invalid_surface.get_width(),
-                            invalid_surface.get_height()))
-
-                        complete = True
-                        
+                        complete = True 
                         start_text, end_text = texts
 
             if complete:
