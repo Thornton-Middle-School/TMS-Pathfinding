@@ -281,8 +281,6 @@ async def main():
                     bads = [not start_text, not end_text]
                     texts = [start_text, end_text]
                     
-                    print(bads, texts)
-
                     for index in range(2):
                         if bads[index]:
                             continue
@@ -301,12 +299,9 @@ async def main():
                             
                     for index, is_bad in enumerate(bads):
                         if is_bad:
-                            print(f"BOO {index}")
                             render_input_default(window, index == 1, RED)
                     
                     if any(bads):
-                        print("BOO")
-                        
                         multiline_render(window, "Invalid Input", 1205, 367, TYPING_SIZE_FONT, color=RED, center=True)
                         pygame.display.update()
                         
