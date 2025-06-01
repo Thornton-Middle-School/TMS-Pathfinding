@@ -136,12 +136,36 @@ def closest_to_heuristic(node: Node, ends: list[Node], heuristic_function):
     return min(heuristic_function(node, end) for end in ends)
 
 def multiline_render(window: pygame.Surface, text: str, x: float, y: float, font: pygame.font.Font, color=BLACK, center=False, spacing=1.0) -> None:
-    line_count = text.count("\n") + 1
     rendered_lines = [font.render(line, True, color) for line in text.split("\n")]
+    line_count = len(rendered_lines)
 
+    # Calculate total height using actual rendered heights and spacing
+    total_height = sum(line.get_height() for line in rendered_lines)
+    if line_count > 1:
+        total_height += (line_count - 1) * (spacing - 1) * font.get_linesize()    # Calculate the maximum width of the rendered text
+    max_width = max(line.get_width() for line in rendered_lines)
+
+    # Calculate vertical centering with slight visual adjustment
     if center:
-        y -= (sum(rendered.get_height() for rendered in rendered_lines) + font.get_height() * (line_count - 1) * (spacing - 1)) / 2
+        # Small fixed offset that works well for most fonts
+        visual_offset = 2  # Move text down by 2 pixels for better visual centering
+        current_y = y - (total_height / 2) + visual_offset
+    else:
+        current_y = y
 
-    for line, rendered in zip(text.split("\n"), rendered_lines):
-        window.blit(rendered, (((x - rendered.get_width() / 2) if center else x), y))
-        y += rendered.get_height() + font.get_height() * (spacing - 1)
+    for rendered in rendered_lines:
+        if center:
+            # Center each line individually based on its own width
+            x_pos = x - (rendered.get_width() / 2)
+        else:
+            x_pos = x
+        
+        window.blit(rendered, (x_pos, current_y))
+        current_y += rendered.get_height() + (spacing - 1) * font.get_linesize()
+
+    # Debug visuals for alignment (commented out to see actual alignment)
+    # if center:
+    #     # Draw bounding box around the text area (blue box)
+    #     top_y = y - (total_height / 2)
+    #     pygame.draw.rect(window, BLUE, (x - max_width / 2, top_y, max_width, total_height), 1)
+    #     pygame.draw.circle(window, RED, (int(x), int(y)), 3)  # Center point
