@@ -14,7 +14,7 @@ from utils import *
 
 def render_input_default(window: pygame.Surface, label_end: bool, color: tuple[int, int, int]=BLACK):
     render_text = TYPING_SIZE_FONT.render("  End: " if label_end else "Start: ", True, color)
-    window.blit(render_text, (875, 128 + 100 * label_end - render_text.get_height() / 2))
+    window.blit(render_text, (875, 133 + 100 * label_end - render_text.get_height() / 2))
 
     text_box = pygame.Rect(1005, 97 + 100 * label_end, 150, 60)
     pygame.draw.rect(window, color, text_box, width=5)
@@ -149,7 +149,7 @@ async def main():
         pygame.draw.rect(window, GREEN, submit_button)
         pygame.draw.rect(window, BLACK, submit_button, width=5)
         
-        multiline_render(window, "Submit", 1380, 182, TYPING_SIZE_FONT, color=BLACK, center=True)
+        multiline_render(window, "Submit", 1380, 177, TYPING_SIZE_FONT, color=BLACK, center=True)
 
         key_text = ("Key:\n"
                     "B/BB or G/GB + (identifier) (very small font): Boys/Girls Bathroom\n"
@@ -158,7 +158,7 @@ async def main():
                     "S: Stairs")
 
         width = max(KEY_FONT.render(line, True, BLACK).get_width() for line in key_text.split("\n"))
-        multiline_render(window, key_text, (2411 - width) / 2, HEIGHT - 30 - KEY_FONT.get_height() * 7, KEY_FONT,
+        multiline_render(window, key_text, (2411 - width) / 2, HEIGHT - 27 - KEY_FONT.get_height() * 7, KEY_FONT,
                          spacing=1.5)
 
         instructions = ("Instructions:\n"
@@ -172,7 +172,7 @@ async def main():
                         "4. If you want to reset, click the reset button.\n")
 
         width = max(INSTRUCTION_FONT.render(line, True, BLACK).get_width() for line in instructions.split("\n"))
-        multiline_render(window, instructions, (2411 - width) / 2, HEIGHT - 50 - KEY_FONT.get_height() * 7 - INSTRUCTION_FONT.get_height() * 14, INSTRUCTION_FONT, spacing=1.5)
+        multiline_render(window, instructions, (2411 - width) / 2, HEIGHT - 62 - KEY_FONT.get_height() * 7 - INSTRUCTION_FONT.get_height() * 15, INSTRUCTION_FONT, spacing=1.5)
 
         pygame.display.update()
 

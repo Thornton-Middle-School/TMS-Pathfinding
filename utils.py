@@ -140,7 +140,7 @@ def multiline_render(window: pygame.Surface, text: str, x: float, y: float, font
     rendered_lines = [font.render(line, True, color) for line in text.split("\n")]
 
     if center:
-        y -= (sum(rendered.get_height() for rendered in rendered_lines) + font.get_height() * (line_count - 1) * (spacing - 1) - 4) / 2
+        y -= (sum(rendered.get_height() + font.get_descent() for rendered in rendered_lines) + font.get_height() * (line_count - 1) * (spacing - 1)) / 2
         
     for line, rendered in zip(text.split("\n"), rendered_lines):
         window.blit(rendered, (((x - rendered.get_width() / 2 + 1) if center else x), y))
