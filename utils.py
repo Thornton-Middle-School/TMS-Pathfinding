@@ -226,8 +226,8 @@ class TextBox:
         text_x, text_y = center_one_line(self.rect, txt_surf, self.font)
         surface.blit(txt_surf, (text_x, text_y))
 
-        # Blinking cursor based on time
-        if self.active and pygame.time.get_ticks() % 1000 < 500:
+        # Blinking cursor based on flicker_cursor() method
+        if self.active and self.cursor_visible:
             # Draw cursor vertically centered in box
             cursor_x = text_x + txt_surf.get_width() + 2
             cursor_h = self.font.get_height()
