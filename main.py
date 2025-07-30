@@ -1,5 +1,6 @@
 import sys
 import pickle
+import asyncio
 
 from math import floor
 from re import sub
@@ -76,7 +77,7 @@ def shortest_path(start: Node, ends: Node, points: NodeDict, adjacency: defaultd
     
     pygame.display.update()
     
-def main():
+async def main():
     window = pygame.display.set_mode((LENGTH, HEIGHT))
     window.fill(WHITE)
 
@@ -85,6 +86,7 @@ def main():
 
     multiline_render(window, "Loading ...", LENGTH / 2, HEIGHT / 2, HUGE_FONT, color=BLACK, center=True)
     pygame.display.update()
+    await asyncio.sleep(0)
 
     with open("classrooms.pkl", "rb") as file:
         points: NodeDict = pickle.load(file)
@@ -201,6 +203,7 @@ def main():
         
         # Initial display update to show all UI elements
         pygame.display.update()
+        await asyncio.sleep(0)
         
         while True:
             for event in pygame.event.get():
@@ -235,6 +238,7 @@ def main():
                     end_text_box.draw(window)
                     submit_button.draw(window)
                     pygame.display.update()
+                    await asyncio.sleep(0)
 
                 if event.type == pygame.KEYDOWN:
                     # Skip if no box is focused or space pressed
@@ -248,6 +252,7 @@ def main():
                         start_text_box.draw(window)
                         end_text_box.draw(window)
                         pygame.display.update()
+                        await asyncio.sleep(0)
                         continue
 
                     if event.key == pygame.K_RETURN:
@@ -284,6 +289,7 @@ def main():
                     end_text_box.draw(window)
                     submit_button.draw(window)
                     pygame.display.update()
+                    await asyncio.sleep(0)
                     
                 # Update cursor flicker only for active textbox
                 if current == start_text_box:
@@ -336,6 +342,7 @@ def main():
                     if any(bads):
                         multiline_render(window, "Invalid Input", 1205, 367, TYPING_SIZE_FONT, color=RED, center=True)
                         pygame.display.update()
+                        await asyncio.sleep(0)
                         
                         start_text, end_text = original_start_text, original_end_text
                         continue
@@ -357,10 +364,12 @@ def main():
             
             # Single display update per frame
             pygame.display.update()
+            await asyncio.sleep(0)
 
         window.blit(SLIGHTLY_BIG_FONT.render("Calculating...", True, BLACK), (50, 70))
         
         pygame.display.update()
+        await asyncio.sleep(0)
         
         if start_text in ("B1", "G1"):
             start_text = start_text[0] + "B"
@@ -387,6 +396,7 @@ def main():
         submit_button.draw(window)
         reset_button.draw(window)
         pygame.display.update()
+        await asyncio.sleep(0)
         
         # wait for reset click to restart
         clock = pygame.time.Clock()
@@ -410,11 +420,12 @@ def main():
                     reset_button.visible = False
                     
                     break
-                
             else:
+                # Required for web deployment - yield control to browser
+                await asyncio.sleep(0)
                 continue
             
             break
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
