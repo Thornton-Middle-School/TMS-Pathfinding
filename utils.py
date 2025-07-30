@@ -2,7 +2,7 @@ from math import sqrt
 from functools import total_ordering
 
 from collections.abc import MutableMapping
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, replace
 
 import pygame
 
@@ -10,7 +10,7 @@ LENGTH, HEIGHT = 1600, 960
 
 DIAGONAL_DISTANCE = sqrt(2)
 STAIRCASE_LENGTH = 35
-SCALE = 0.8572 # approximate scale calculated after finding distance from 24-36 and comparing with px in app
+SCALE = 0.8572  # approximate scale calculated after finding distance from 24-36 and comparing with px in app
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -29,7 +29,7 @@ MEDIUM_FONT = pygame.font.Font("font.otf", 16)
 BIG_FONT = pygame.font.Font("font.otf", 30)
 HUGE_FONT = pygame.font.Font("font.otf", 45)
 SLIGHTLY_BIG_FONT = pygame.font.Font("font.otf", 22)
-TYPING_SIZE_FONT = pygame.font.Font("font.otf", 40)
+TYPING_SIZE_FONT = pygame.font.Font("font.otf", 37)
 KEY_FONT = pygame.font.Font("font.otf", 25)
 INSTRUCTION_FONT = pygame.font.Font("font.otf", 20)
 
@@ -54,65 +54,70 @@ class Node:
         return f"{self.type_} @ ({self.min_x}, {self.min_y})<->({self.max_x}, {self.max_y})"
 
     def __lt__(self, other):
-        return (self.min_x, self.max_x, self.min_y, self.max_y, self.color, self.type_) < (other.min_x, other.max_x, other.min_y, other.max_y, other.color, other.type_)
+        return (self.min_x, self.max_x, self.min_y, self.max_y, self.color, self.type_) < (other.min_x, other.max_x,
+                                                                                           other.min_y, other.max_y,
+                                                                                           other.color, other.type_)
 
     def __eq__(self, other):
-        return hash(self) == hash(other) 
-    
+        return hash(self) == hash(other)
+
     def copy(self):
         return replace(self)
-    
+
+
 class NodeDict(MutableMapping[str, dict[str, Node]]):
-    def __init__(self, data: dict[str, dict[str, Node]]=None):
+    def __init__(self, data: dict[str, dict[str, Node]] = None):
         self.data = data if data is not None else {"Rooms": {}, "Other": {}}
-        
+
     @property
     def rooms(self) -> dict[str, Node]:
         return self.data["Rooms"]
-    
+
     @property
     def other(self) -> dict[str, Node]:
         return self.data["Other"]
-    
-    def placement(self, key: str):
+
+    @staticmethod
+    def placement(key: str):
         if not isinstance(key, str):
             raise TypeError(f"Key must be a string, not {type(key).__name__}")
-        
+
         return "Other" if key.startswith("Empty @ ") else "Rooms"
-        
+
     def __getitem__(self, key: str) -> Node:
         if not isinstance(key, str):
             raise TypeError(f"Key must be a string, not {type(key).__name__}")
-        
+
         return self.data[self.placement(key)][key]
-    
+
     def __setitem__(self, key: str, value: Node):
         if not isinstance(key, str):
             raise TypeError(f"Key must be a string, not {type(key).__name__}")
-        
+
         self.data[self.placement(key)][key] = value
-        
+
     def __delitem__(self, key: str):
         del self.data[self.placement(key)][key]
-        
+
     def __iter__(self):
         return (self.rooms | self.other).__iter__()
 
     def __len__(self):
         return self.rooms.__len__() + self.other.__len__()
-    
+
     def __dict__(self):
         return self.data
-    
+
     def __getstate__(self):
         return self.data
-    
+
     def __setstate__(self, state):
         self.data = state
-    
+
     def __repr__(self):
         return f"NodeDict({self.data})"
-    
+
+
 def upstairs(node: Node | str):
     name = node.type_ if isinstance(node, Node) else node
 
@@ -122,26 +127,134 @@ def upstairs(node: Node | str):
 
     return False
 
+
 def octile_heuristic(node: Node, end: Node):
-    y_difference = abs(node.corner_y - end.corner_y) if upstairs(node) == upstairs(end) else abs(abs(node.corner_y - end.corner_y) - 270)
-    return (abs(node.corner_x - end.corner_x) + y_difference + (DIAGONAL_DISTANCE - 2) * min(abs(node.corner_x - end.corner_x), y_difference) + (upstairs(node) != upstairs(end)) * STAIRCASE_LENGTH) * 1.001
+    y_difference = abs(node.corner_y - end.corner_y) if upstairs(node) == upstairs(end) else abs(
+        abs(node.corner_y - end.corner_y) - 270)
+    return (abs(node.corner_x - end.corner_x) + y_difference + (DIAGONAL_DISTANCE - 2) * min(
+        abs(node.corner_x - end.corner_x), y_difference) + (upstairs(node) != upstairs(end)) * STAIRCASE_LENGTH) * 1.001
+
 
 def euclidean_heuristic(node: Node, end: Node) -> float:
     if upstairs(node) != upstairs(end):
-        return (sqrt((node.corner_x - end.corner_x) ** 2 + (abs(node.corner_y - end.corner_y) - 270) ** 2) + STAIRCASE_LENGTH) * 1.001
+        return (sqrt((node.corner_x - end.corner_x) ** 2 + (
+                    abs(node.corner_y - end.corner_y) - 270) ** 2) + STAIRCASE_LENGTH) * 1.001
 
     return sqrt((node.corner_x - end.corner_x) ** 2 + (node.corner_y - end.corner_y) ** 2) * 1.001
+
 
 def closest_to_heuristic(node: Node, ends: list[Node], heuristic_function):
     return min(heuristic_function(node, end) for end in ends)
 
-def multiline_render(window: pygame.Surface, text: str, x: float, y: float, font: pygame.font.Font, color=BLACK, center=False, spacing=1.0) -> None:
+
+def multiline_render(window: pygame.Surface, text: str, x: float, y: float, font: pygame.font.Font, color=BLACK,
+                     center=False, spacing=1.0) -> None:
     line_count = text.count("\n") + 1
     rendered_lines = [font.render(line, True, color) for line in text.split("\n")]
 
     if center:
-        y -= (sum(rendered.get_height() - (font.get_height() + 5) // 3 for rendered in rendered_lines) + font.get_height() * (line_count - 1) * (spacing - 1)) // 2
-        
+        y -= (sum(
+            rendered.get_height() - (font.get_height() + 5) // 3 for rendered in rendered_lines) + font.get_height() * (
+                          line_count - 1) * (spacing - 1)) // 2
+
     for line, rendered in zip(text.split("\n"), rendered_lines):
         window.blit(rendered, ((x - (rendered.get_width() - 1) // 2 if center else x), y))
         y += rendered.get_height() + font.get_height() * (spacing - 1)
+
+def center_one_line(surface: pygame.Rect, rendered: pygame.Surface, font: pygame.font.Font) -> tuple[int, int]:
+    x = surface.x + (surface.width - rendered.get_width()) // 2
+    y = surface.y + (surface.height - font.get_height()) // 2 + 3
+    return x, y
+
+class TextBox:
+    def __init__(self, rect: pygame.Rect, font: pygame.font.Font, text_color=BLACK, bg_color=WHITE):
+        self.rect = rect
+        self.font = font
+        self.text_color = text_color
+        self.bg_color = bg_color
+        self.text = ''
+        self.active = False
+        self.cursor_visible = False
+        self.cursor_timer = 0.0
+
+    def is_pressed(self, position):
+        return self.rect.collidepoint(position)
+
+    def deactivate(self):
+        self.active = False
+        self.cursor_visible = False
+        self.cursor_timer = 0.0
+
+    def activate(self, surface):
+        self.active = True
+        self.cursor_visible = True
+        self.cursor_timer = 0.0
+
+        self.draw(surface)
+
+    def update_text(self, event):
+        if not self.active:
+            return
+
+        if event.key == pygame.K_BACKSPACE:
+            self.text = self.text[:-1]
+
+        elif event.key in (pygame.K_TAB, pygame.K_RETURN, pygame.K_ESCAPE):
+            self.deactivate()
+
+        elif event.unicode.isalnum():  # only alphanumeric
+            self.text += event.unicode
+
+    def flicker_cursor(self, dt):
+        if self.active:
+            self.cursor_timer += dt
+            if self.cursor_timer >= 0.7:
+                self.cursor_visible = not self.cursor_visible
+                self.cursor_timer = 0.0
+        else:
+            self.cursor_visible = False
+
+    def draw(self, surface, valid=True):
+        # Draw background and border
+        pygame.draw.rect(surface, self.bg_color, self.rect)
+        pygame.draw.rect(surface, BLACK if valid else RED, self.rect, 5)
+
+        # Render text (even empty) centered vertically
+        txt = self.text if self.text else ''
+        txt_surf = self.font.render(txt, True, self.text_color)
+        # Center single-line text using helper
+        text_x, text_y = center_one_line(self.rect, txt_surf, self.font)
+        surface.blit(txt_surf, (text_x, text_y))
+
+        # Blinking cursor based on time
+        if self.active and pygame.time.get_ticks() % 1000 < 500:
+            # Draw cursor vertically centered in box
+            cursor_x = text_x + txt_surf.get_width() + 2
+            cursor_h = self.font.get_height()
+            cursor_y = self.rect.y + (self.rect.h - cursor_h) // 2
+            pygame.draw.line(surface, self.text_color,
+                             (cursor_x, cursor_y), (cursor_x, cursor_y + cursor_h), 2)
+
+class Button:
+    def __init__(self, text, rect: pygame.Rect, font: pygame.font.Font, bg_color=GREEN, text_color=BLACK):
+        self.text = text
+        self.rect = rect
+        self.font = font
+        self.bg_color = bg_color
+        self.text_color = text_color
+        self.visible = True
+
+    def is_pressed(self, position):
+        return self.visible and self.rect.collidepoint(position)
+
+    def draw(self, surface: pygame.Surface):
+        if not self.visible:
+            return
+
+        pygame.draw.rect(surface, self.bg_color, self.rect)
+        pygame.draw.rect(surface, self.text_color, self.rect, 2)
+
+        txt_surf = self.font.render(self.text, True, self.text_color)
+        # Center button text using helper
+        text_x, text_y = center_one_line(self.rect, txt_surf, self.font)
+        surface.blit(txt_surf, (text_x, text_y))
