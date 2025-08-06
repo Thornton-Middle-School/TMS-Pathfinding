@@ -2,19 +2,7 @@ from math import floor, sqrt
 from heapq import heappush, heappop
 from collections import defaultdict
 import pygame
-from utils import Node, DIAGONAL_DISTANCE, STAIRCASE_LENGTH, SCALE, ORANGE, GREEN, RED, WHITE, TYPING_SIZE_FONT, multiline_render
-
-
-def upstairs(node: Node | str):
-    """Check if a node is on the upstairs floor."""
-    name = node.type_ if isinstance(node, Node) else node
-
-    if len(name) > 2:
-        if name[1] == "2" or name[2] == "3" or name[0] == "S" and name[3] == "2":
-            return True
-
-    return False
-
+from utils import Node, upstairs, DIAGONAL_DISTANCE, STAIRCASE_LENGTH, SCALE, ORANGE, GREEN, RED, WHITE, TYPING_SIZE_FONT, multiline_render
 
 def octile_heuristic(node: Node, end: Node):
     """Calculate octile distance heuristic between two nodes."""

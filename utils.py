@@ -116,6 +116,15 @@ class NodeDict(MutableMapping[str, dict[str, Node]]):
     def __repr__(self):
         return f"NodeDict({self.data})"
 
+def upstairs(node: Node | str):
+    """Check if a node is on the upstairs floor."""
+    name = node.type_ if isinstance(node, Node) else node
+
+    if len(name) > 2:
+        if name[1] == "2" or name[2] == "3" or name[0] == "S" and name[3] == "2":
+            return True
+
+    return False
 
 def multiline_render(window: pygame.Surface, text: str, x: float, y: float, font: pygame.font.Font, color=BLACK,
                      center=False, spacing=1.0) -> None:
