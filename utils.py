@@ -64,7 +64,6 @@ class Node:
     def copy(self):
         return replace(self)
 
-
 class NodeDict(MutableMapping[str, dict[str, Node]]):
     def __init__(self, data: dict[str, dict[str, Node]] = None):
         self.data = data if data is not None else {"Rooms": {}, "Other": {}}
@@ -116,35 +115,6 @@ class NodeDict(MutableMapping[str, dict[str, Node]]):
 
     def __repr__(self):
         return f"NodeDict({self.data})"
-
-
-def upstairs(node: Node | str):
-    name = node.type_ if isinstance(node, Node) else node
-
-    if len(name) > 2:
-        if name[1] == "2" or name[2] == "3" or name[0] == "S" and name[3] == "2":
-            return True
-
-    return False
-
-
-def octile_heuristic(node: Node, end: Node):
-    y_difference = abs(node.corner_y - end.corner_y) if upstairs(node) == upstairs(end) else abs(
-        abs(node.corner_y - end.corner_y) - 270)
-    return (abs(node.corner_x - end.corner_x) + y_difference + (DIAGONAL_DISTANCE - 2) * min(
-        abs(node.corner_x - end.corner_x), y_difference) + (upstairs(node) != upstairs(end)) * STAIRCASE_LENGTH) * 1.001
-
-
-def euclidean_heuristic(node: Node, end: Node) -> float:
-    if upstairs(node) != upstairs(end):
-        return (sqrt((node.corner_x - end.corner_x) ** 2 + (
-                    abs(node.corner_y - end.corner_y) - 270) ** 2) + STAIRCASE_LENGTH) * 1.001
-
-    return sqrt((node.corner_x - end.corner_x) ** 2 + (node.corner_y - end.corner_y) ** 2) * 1.001
-
-
-def closest_to_heuristic(node: Node, ends: list[Node], heuristic_function):
-    return min(heuristic_function(node, end) for end in ends)
 
 
 def multiline_render(window: pygame.Surface, text: str, x: float, y: float, font: pygame.font.Font, color=BLACK,

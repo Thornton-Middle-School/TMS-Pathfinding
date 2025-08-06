@@ -2,81 +2,15 @@ import sys
 import pickle
 import asyncio
 
-from math import floor
 from re import sub
 
-from heapq import heappush, heappop
 from collections import defaultdict
 
 from time import perf_counter
 
 from utils import *
+from pathfinding import shortest_path
 
-def shortest_path(start: Node, ends: Node, points: NodeDict, adjacency: defaultdict[Node, list[list[Node | float]]], window: pygame.Surface) -> list[Node]:
-    priority_queue: tuple[float, Node, float, float] = []
-    start.distance = 0
-    
-    start_heuristic = closest_to_heuristic(start, ends, octile_heuristic)
-    heappush(priority_queue, (start_heuristic, start_heuristic, 0, start))
-
-    visited = {start}
-
-    best_end = None
-    
-    while priority_queue:
-        _, _, distance, node = heappop(priority_queue)
-
-        if distance > node.distance:
-            continue
-
-        if node in ends:
-            best_end = node
-            break
-
-        for adjacent, edge_weight in adjacency.get(node):
-            if adjacent.distance > distance + edge_weight:
-                adjacent.from_ = (node, edge_weight)
-                adjacent.distance = distance + edge_weight
-
-                prediction = closest_to_heuristic(adjacent, ends, octile_heuristic)
-                heappush(priority_queue, (prediction + distance + edge_weight,
-                                            prediction, distance + edge_weight, adjacent))
-
-                visited.add(adjacent)
-
-    node = best_end
-    distance = 0.0
-
-    while node.from_ is not None:
-        print(node)
-        
-        if not (node.type_[:-1] == node.from_[0].type_[:-1] and node.type_[0] == "S" and node.type_ != "SG"):
-            pygame.draw.line(window, ORANGE, (node.corner_x, node.corner_y),
-                                (node.from_[0].corner_x, node.from_[0].corner_y), width=2)
-
-        _next = node.from_
-        distance += _next[1]
-        node.from_ = None
-        node = _next[0]
-
-    start.distance = float("inf")
-    distance *= SCALE
-
-    for node in visited:
-        node.distance = float("inf")
-
-    pygame.draw.circle(window, GREEN, (start.corner_x, start.corner_y), 4)
-    pygame.draw.circle(window, RED, (best_end.corner_x, best_end.corner_y), 4)
-
-    pygame.draw.rect(window, WHITE, (50, 70, 150, 70))
-
-    results_text = (f"Distance: {floor(distance)} ft\n"
-                    f"Walking Time: ~ {floor((distance / 308 * 75) // 60)}:{("0" if floor((distance / 308 * 75) % 60) < 10 else "") + str(floor((distance / 308 * 75) % 60))} (m:ss)")
-
-    multiline_render(window, results_text, 1205, 327, TYPING_SIZE_FONT, center=True)
-    
-    pygame.display.update()
-    
 async def main():
     window = pygame.display.set_mode((LENGTH, HEIGHT))
     window.fill(WHITE)
@@ -386,7 +320,7 @@ async def main():
 
         ends = [end.copy() for end in ends]
                 
-        shortest_path(start, ends, points, adjacency, window)
+        shortest_path(start, ends, adjacency, window)
         
         # switch buttons: hide submit, show reset
         submit_button.visible = False
